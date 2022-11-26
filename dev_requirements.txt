@@ -1,0 +1,5 @@
+black
+isort
+mypy
+pylint
+types-requests

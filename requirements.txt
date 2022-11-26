@@ -1,0 +1,13 @@
+accelerate
+argh
+dacite
+diffusers
+flask
+flask_cors
+numpy
+pillow
+pydub
+scipy
+torch
+torchaudio
+transformers
