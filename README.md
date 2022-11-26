@@ -1,6 +1,6 @@
-# Riffusion Inference Server
+# Riffusion
 
-Model inference backend for the Riffusion app.
+Python backend for the Riffusion app that does the model inference and audio processing.
 
  * a diffusers pipeline that performs prompt interpolation combined with image conditioning
  * a module for (approximately) converting between spectrograms and waveforms
