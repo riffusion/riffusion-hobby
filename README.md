@@ -28,7 +28,7 @@ Example input (see [InferenceInput](https://github.com/hmartiro/riffusion-infere
 {
   alpha: 0.75,
   num_inference_steps: 50,
-  seed_image_id: 0,
+  seed_image_id: "og_beat",
 
   start: {
     prompt: "church bells on sunday",
@@ -53,4 +53,3 @@ Example output (see [InferenceOutput](https://github.com/hmartiro/riffusion-infe
   audio: "< base64 encoded MP3 clip >",,
 }
 ```
-

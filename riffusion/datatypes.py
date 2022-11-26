@@ -3,6 +3,7 @@ Data model for the riffusion API.
 """
 
 from dataclasses import dataclass
+import typing as T
 
 
 @dataclass
@@ -46,8 +47,10 @@ class InferenceInput:
     num_inference_steps: int = 50
 
     # Which seed image to use
-    # TODO(hayk): Convert this to a string ID and add a seed image + mask API.
-    seed_image_id: int = 0
+    seed_image_id: str = "og_beat"
+
+    # ID of mask image to use
+    mask_image_id: T.Optional[str] = None
 
 
 @dataclass

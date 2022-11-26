@@ -113,8 +113,17 @@ def run_inference():
         return f"Invalid seed image: {inputs.seed_image_id}", 400
     init_image = PIL.Image.open(str(init_image_path)).convert("RGB")
 
+    # Load the mask image by ID
+    if inputs.mask_image_id:
+        mask_image_path = Path(SEED_IMAGES_DIR, f"{inputs.mask_image_id}.png")
+        if not mask_image_path.is_file:
+            return f"Invalid mask image: {inputs.mask_image_id}", 400
+        mask_image = PIL.Image.open(str(mask_image_path)).convert("RGB")
+    else:
+        mask_image = None
+
     # Execute the model to get the spectrogram image
-    image = MODEL.riffuse(inputs, init_image=init_image)
+    image = MODEL.riffuse(inputs, init_image=init_image, mask_image=mask_image)
 
     # Reconstruct audio from the image
     wav_bytes = wav_bytes_from_spectrogram_image(image)
