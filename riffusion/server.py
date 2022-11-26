@@ -139,7 +139,7 @@ def run_inference():
     mp3_bytes = mp3_bytes_from_wav_bytes(wav_bytes)
 
     # Compute the output as base64 encoded strings
-    image_bytes = image_bytes_from_image(image, mode="PNG")
+    image_bytes = image_bytes_from_image(image, mode="JPEG")
     output = InferenceOutput(image=base64_encode(image_bytes), audio=base64_encode(mp3_bytes))
 
     # Log the total time
