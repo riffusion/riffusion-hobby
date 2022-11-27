@@ -2,6 +2,7 @@
 Audio processing tools to convert between spectrogram images and waveforms.
 """
 import io
+import typing as T
 
 import numpy as np
 from PIL import Image
@@ -11,9 +12,9 @@ import torch
 import torchaudio
 
 
-def wav_bytes_from_spectrogram_image(image: Image.Image) -> io.BytesIO:
+def wav_bytes_from_spectrogram_image(image: Image.Image) -> T.Tuple[io.BytesIO, float]:
     """
-    Reconstruct a WAV audio clip from a spectrogram image.
+    Reconstruct a WAV audio clip from a spectrogram image. Also returns the duration in seconds.
     """
 
     max_volume = 50
@@ -37,7 +38,7 @@ def wav_bytes_from_spectrogram_image(image: Image.Image) -> io.BytesIO:
     hop_length = int(step_size_ms / 1000.0 * sample_rate)
     win_length = int(window_duration_ms / 1000.0 * sample_rate)
 
-    waveform = waveform_from_spectrogram(
+    samples = waveform_from_spectrogram(
         Sxx=Sxx,
         n_fft=n_fft,
         hop_length=hop_length,
@@ -51,10 +52,12 @@ def wav_bytes_from_spectrogram_image(image: Image.Image) -> io.BytesIO:
     )
 
     wav_bytes = io.BytesIO()
-    wavfile.write(wav_bytes, sample_rate, waveform.astype(np.int16))
+    wavfile.write(wav_bytes, sample_rate, samples.astype(np.int16))
     wav_bytes.seek(0)
 
-    return wav_bytes
+    duration_s = float(len(samples)) / sample_rate
+
+    return wav_bytes, duration_s
 
 
 def spectrogram_from_image(

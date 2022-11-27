@@ -56,9 +56,13 @@ class InferenceInput:
 @dataclass
 class InferenceOutput:
     """
-    Response from the model server. Contains a base64 encoded spectrogram image and a base64
-    encoded MP3 audio clip.
+    Response from the model inference server.
     """
-
+    # base64 encoded spectrogram image as a JPEG
     image: str
+
+    # base64 encoded audio clip as an MP3
     audio: str
+
+    # The duration of the audio clip
+    duration_s: float

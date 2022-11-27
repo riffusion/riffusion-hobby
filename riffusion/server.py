@@ -45,7 +45,7 @@ def run_app(
     port: int = 3000,
     debug: bool = False,
     ssl_certificate: T.Optional[str] = None,
-    ssl_key: T.Optional[str] = None
+    ssl_key: T.Optional[str] = None,
 ):
     """
     Run a flask API that serves the given riffusion model checkpoint.
@@ -135,12 +135,18 @@ def run_inference():
     image = MODEL.riffuse(inputs, init_image=init_image, mask_image=mask_image)
 
     # Reconstruct audio from the image
-    wav_bytes = wav_bytes_from_spectrogram_image(image)
+    wav_bytes, duration_s = wav_bytes_from_spectrogram_image(image)
     mp3_bytes = mp3_bytes_from_wav_bytes(wav_bytes)
 
     # Compute the output as base64 encoded strings
     image_bytes = image_bytes_from_image(image, mode="JPEG")
-    output = InferenceOutput(image=base64_encode(image_bytes), audio=base64_encode(mp3_bytes))
+
+    # Assemble the output dataclass
+    output = InferenceOutput(
+        image="data:image/jpeg;base64," + base64_encode(image_bytes),
+        audio="data:audio/mpeg;base64," + base64_encode(mp3_bytes),
+        duration_s=duration_s,
+    )
 
     # Log the total time
     logging.info(f"Request took {time.time() - start_time:.2f} s")
