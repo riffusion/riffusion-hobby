@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import typing as T
 
 
-@dataclass
+@dataclass(frozen=True)
 class PromptInput:
     """
     Parameters for one end of interpolation.
@@ -25,7 +25,7 @@ class PromptInput:
     guidance: float = 7.0
 
 
-@dataclass
+@dataclass(frozen=True)
 class InferenceInput:
     """
     Parameters for a single run of the riffusion model, interpolating between
@@ -53,7 +53,7 @@ class InferenceInput:
     mask_image_id: T.Optional[str] = None
 
 
-@dataclass
+@dataclass(frozen=True)
 class InferenceOutput:
     """
     Response from the model inference server.
