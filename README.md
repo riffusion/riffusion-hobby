@@ -5,8 +5,9 @@ Python backend for the Riffusion app that does the model inference and audio pro
  * a diffusers pipeline that performs prompt interpolation combined with image conditioning
  * a module for (approximately) converting between spectrograms and waveforms
  * a flask server to provide model inference via API to the next.js app
- 
+
 The web app lives at https://github.com/hmartiro/riffusion-app
+For details read https://www.riffusion.com/about
 
 ## Install
 Tested with Python 3.9 and diffusers 0.9.0
@@ -51,7 +52,7 @@ Example input (see [InferenceInput](https://github.com/hmartiro/riffusion-infere
 Example output (see [InferenceOutput](https://github.com/hmartiro/riffusion-inference/blob/main/riffusion/datatypes.py#L54) for the API):
 ```
 {
-  image: "< base64 encoded PNG >",
+  image: "< base64 encoded JPEG image >",
   audio: "< base64 encoded MP3 clip >",,
 }
 ```
