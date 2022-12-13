@@ -1,6 +1,6 @@
 # Riffusion Inference Server
 
-Riffusion is an app for real-time music generation with stable diffusion. This repository contains the inference server.
+Riffusion is an app for real-time music generation with stable diffusion.
 
 Read about it at https://www.riffusion.com/about and try it at https://www.riffusion.com/.
 
@@ -8,7 +8,7 @@ Read about it at https://www.riffusion.com/about and try it at https://www.riffu
 * Inference server: https://github.com/hmartiro/riffusion-inference
 * Model checkpoint: https://huggingface.co/riffusion/riffusion-model-v1
 
-This Python backend does the model inference and audio processing. It contains:
+This repository contains the Python backend does the model inference and audio processing, including:
 
  * a diffusers pipeline that performs prompt interpolation combined with image conditioning
  * a module for (approximately) converting between spectrograms and waveforms
