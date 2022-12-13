@@ -1,13 +1,15 @@
 # Riffusion
 
-Python backend for the Riffusion app that does the model inference and audio processing.
+Python backend for the Riffusion app that does the model inference and audio processing. For details read https://www.riffusion.com/about
 
  * a diffusers pipeline that performs prompt interpolation combined with image conditioning
  * a module for (approximately) converting between spectrograms and waveforms
  * a flask server to provide model inference via API to the next.js app
 
-The web app lives at https://github.com/hmartiro/riffusion-app
-For details read https://www.riffusion.com/about
+Code:
+* Web app: https://github.com/hmartiro/riffusion-app
+* Inference server: https://github.com/hmartiro/riffusion-inference
+* Model checkpoint: https://huggingface.co/riffusion/riffusion-model-v1
 
 ## Install
 Tested with Python 3.9 and diffusers 0.9.0
