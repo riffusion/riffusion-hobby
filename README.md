@@ -1,15 +1,19 @@
-# Riffusion
+# Riffusion Inference Server
 
-Python backend for the Riffusion app that does the model inference and audio processing. For details read https://www.riffusion.com/about
+Riffusion is an app for real-time music generation with stable diffusion. This repository contains the inference server.
+
+Read about it at https://www.riffusion.com/about and try it at https://www.riffusion.com/.
+
+* Web app: https://github.com/hmartiro/riffusion-app
+* Inference server: https://github.com/hmartiro/riffusion-inference
+* Model checkpoint: https://huggingface.co/riffusion/riffusion-model-v1
+
+This Python backend does the model inference and audio processing. It contains:
 
  * a diffusers pipeline that performs prompt interpolation combined with image conditioning
  * a module for (approximately) converting between spectrograms and waveforms
  * a flask server to provide model inference via API to the next.js app
 
-Code:
-* Web app: https://github.com/hmartiro/riffusion-app
-* Inference server: https://github.com/hmartiro/riffusion-inference
-* Model checkpoint: https://huggingface.co/riffusion/riffusion-model-v1
 
 ## Install
 Tested with Python 3.9 and diffusers 0.9.0
