@@ -28,8 +28,10 @@ python -m pip install -r requirements.txt
 ## Run
 Start the Flask server:
 ```
-python -m riffusion.server --port 3013 --host 127.0.0.1 --checkpoint /path/to/diffusers_checkpoint
+python -m riffusion.server --port 3013 --host 127.0.0.1
 ```
+
+You can specify `--checkpoint` with your own directory or huggingface ID in diffusers format.
 
 The model endpoint is now available at `http://127.0.0.1:3013/run_inference` via POST request.
 

@@ -1,6 +1,6 @@
 """
 This file can be used to build a Truss for deployment with Baseten.
-If used, it should be renamed to model.py and placed alongside the other 
+If used, it should be renamed to model.py and placed alongside the other
 files from /riffusion in the standard /model directory of the Truss.
 
 For more on the Truss file format, see https://truss.baseten.co/
@@ -23,6 +23,7 @@ from .audio import wav_bytes_from_spectrogram_image, mp3_bytes_from_wav_bytes
 from .datatypes import InferenceInput, InferenceOutput
 from .riffusion_pipeline import RiffusionPipeline
 
+
 class Model:
     def __init__(self, **kwargs) -> None:
         self._data_dir = kwargs["data_dir"]
@@ -31,10 +32,12 @@ class Model:
         self._vae = None
 
         # Download entire seed image folder from huggingface hub
-        self._seed_images_dir = snapshot_download("riffusion/riffusion-model-v1", allow_patterns="*.png")
+        self._seed_images_dir = snapshot_download(
+            "riffusion/riffusion-model-v1", allow_patterns="*.png"
+        )
 
         print(self._seed_images_dir)
-        
+
     def load(self):
         # Load Riffusion model here and assign to self._model.
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -61,11 +64,13 @@ class Model:
             @dataclasses.dataclass
             class UNet2DConditionOutput:
                 sample: torch.FloatTensor
-            
+
             # Use traced unet from hf hub
-            unet_file = hf_hub_download("riffusion/riffusion-model-v1", filename="unet_traced.pt", subfolder="unet_traced")
+            unet_file = hf_hub_download(
+                "riffusion/riffusion-model-v1", filename="unet_traced.pt", subfolder="unet_traced"
+            )
             unet_traced = torch.jit.load(unet_file)
-            
+
             class TracedUNet(torch.nn.Module):
                 def __init__(self):
                     super().__init__()
@@ -77,9 +82,8 @@ class Model:
                     return UNet2DConditionOutput(sample=sample)
 
             pipe.unet = TracedUNet()
-            
+
             self._model = pipe
-            
 
     def preprocess(self, request: Dict) -> Dict:
         """
@@ -113,7 +117,7 @@ class Model:
             return str(exception), 400
 
         # NOTE: Autocast disabled to speed up inference, previous inference time was 10s on T4
-        with torch.inference_mode() and torch.cuda.amp.autocast(enabled = False):
+        with torch.inference_mode() and torch.cuda.amp.autocast(enabled=False):
             response = self.compute(inputs)
 
         return response

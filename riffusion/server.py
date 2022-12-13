@@ -80,15 +80,7 @@ def load_model(checkpoint: str):
 
     model = RiffusionPipeline.from_pretrained(
         checkpoint,
-        revision="fp16",
-        torch_dtype=torch.float16,
-        # Disable the NSFW filter, causes incorrect false positives
-        safety_checker=lambda images, **kwargs: (images, False),
-    )
-
-    model = RiffusionPipeline.from_pretrained(
-        "riffusion/riffusion-model-v1",
-        revision="fp16",
+        revision="main",
         torch_dtype=torch.float16,
         # Disable the NSFW filter, causes incorrect false positives
         safety_checker=lambda images, **kwargs: (images, False),
@@ -97,16 +89,19 @@ def load_model(checkpoint: str):
     @dataclasses.dataclass
     class UNet2DConditionOutput:
         sample: torch.FloatTensor
-    
+
     # Using traced unet from hf hub
-    unet_file = hf_hub_download("riffusion/riffusion-model-v1", filename="unet_traced.pt", subfolder="unet_traced")
+    unet_file = hf_hub_download(
+        "riffusion/riffusion-model-v1", filename="unet_traced.pt", subfolder="unet_traced"
+    )
     unet_traced = torch.jit.load(unet_file)
-    
+
     class TracedUNet(torch.nn.Module):
         def __init__(self):
             super().__init__()
             self.in_channels = model.unet.in_channels
             self.device = model.unet.device
+            self.dtype = torch.float16
 
         def forward(self, latent_model_input, t, encoder_hidden_states):
             sample = unet_traced(latent_model_input, t, encoder_hidden_states)[0]
@@ -155,6 +150,7 @@ def run_inference():
 
     return response
 
+
 # TODO(hayk): Enable cache here.
 # @functools.lru_cache()
 def compute(inputs: InferenceInput) -> str:
@@ -194,7 +190,6 @@ def compute(inputs: InferenceInput) -> str:
     )
 
     return flask.jsonify(dataclasses.asdict(output))
-
 
 
 def image_bytes_from_image(image: PIL.Image, mode: str = "PNG") -> io.BytesIO:
