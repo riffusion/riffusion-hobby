@@ -72,7 +72,6 @@ class RiffusionPipeline(DiffusionPipeline):
             embed = self.text_encoder(text_input.input_ids.to(self.device))[0]
         return embed
 
-    @torch.autocast("cuda")
     @torch.no_grad()
     def riffuse(
         self,

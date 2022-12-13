@@ -19,6 +19,8 @@ from flask_cors import CORS
 import PIL
 import torch
 
+from huggingface_hub import hf_hub_download
+
 from .audio import wav_bytes_from_spectrogram_image
 from .audio import mp3_bytes_from_wav_bytes
 from .datatypes import InferenceInput
@@ -83,6 +85,34 @@ def load_model(checkpoint: str):
         # Disable the NSFW filter, causes incorrect false positives
         safety_checker=lambda images, **kwargs: (images, False),
     )
+
+    model = RiffusionPipeline.from_pretrained(
+        "riffusion/riffusion-model-v1",
+        revision="fp16",
+        torch_dtype=torch.float16,
+        # Disable the NSFW filter, causes incorrect false positives
+        safety_checker=lambda images, **kwargs: (images, False),
+    )
+
+    @dataclasses.dataclass
+    class UNet2DConditionOutput:
+        sample: torch.FloatTensor
+    
+    # Using traced unet from hf hub
+    unet_file = hf_hub_download("riffusion/riffusion-model-v1", filename="unet_traced.pt", subfolder="unet_traced")
+    unet_traced = torch.jit.load(unet_file)
+    
+    class TracedUNet(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.in_channels = model.unet.in_channels
+            self.device = model.unet.device
+
+        def forward(self, latent_model_input, t, encoder_hidden_states):
+            sample = unet_traced(latent_model_input, t, encoder_hidden_states)[0]
+            return UNet2DConditionOutput(sample=sample)
+
+    model.unet = TracedUNet()
 
     model = model.to("cuda")
 
