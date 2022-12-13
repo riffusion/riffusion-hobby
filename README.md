@@ -13,6 +13,7 @@ This repository contains the Python backend does the model inference and audio p
  * a diffusers pipeline that performs prompt interpolation combined with image conditioning
  * a module for (approximately) converting between spectrograms and waveforms
  * a flask server to provide model inference via API to the next.js app
+ * a model template titled baseten.py for deploying as a Truss
 
 
 ## Install
