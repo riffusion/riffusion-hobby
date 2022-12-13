@@ -44,7 +44,7 @@ SEED_IMAGES_DIR = Path(Path(__file__).resolve().parent.parent, "seed_images")
 
 def run_app(
     *,
-    checkpoint: str,
+    checkpoint: str = "riffusion/riffusion-model-v1",
     host: str = "127.0.0.1",
     port: int = 3000,
     debug: bool = False,
