@@ -7,15 +7,15 @@ For more on the Truss file format, see https://truss.baseten.co/
 """
 
 import base64
-from typing import Dict, List
-
 import dataclasses
+import json
 import io
 from pathlib import Path
+from typing import Dict, List
+
 import PIL
 import torch
 import dacite
-import json
 
 from huggingface_hub import hf_hub_download, snapshot_download
 

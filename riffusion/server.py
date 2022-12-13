@@ -84,7 +84,7 @@ def load_model(checkpoint: str):
         torch_dtype=torch.float16,
         # Disable the NSFW filter, causes incorrect false positives
         safety_checker=lambda images, **kwargs: (images, False),
-    )
+    ).to("cuda")
 
     @dataclasses.dataclass
     class UNet2DConditionOutput:
