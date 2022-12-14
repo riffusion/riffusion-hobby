@@ -36,8 +36,6 @@ class Model:
             "riffusion/riffusion-model-v1", allow_patterns="*.png"
         )
 
-        print(self._seed_images_dir)
-
     def load(self):
         # Load Riffusion model here and assign to self._model.
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -128,9 +126,6 @@ class Model:
         """
         # Load the seed image by ID
         init_image_path = Path(self._seed_images_dir, f"seed_images/{inputs.seed_image_id}.png")
-
-        # Convert init_image_path blob to a file
-        print(init_image_path)
 
         if not init_image_path.is_file():
             return f"Invalid seed image: {inputs.seed_image_id}", 400
