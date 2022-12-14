@@ -133,7 +133,7 @@ class Model:
 
         # Load the mask image by ID
         if inputs.mask_image_id:
-            mask_image_path = Path(self._seed_images_dir, f"{inputs.mask_image_id}.png")
+            mask_image_path = Path(self._seed_images_dir, f"seed_images/{inputs.mask_image_id}.png")
             if not mask_image_path.is_file():
                 return f"Invalid mask image: {inputs.mask_image_id}", 400
             mask_image = PIL.Image.open(str(mask_image_path)).convert("RGB")
