@@ -72,12 +72,30 @@ class RiffusionPipeline(DiffusionPipeline):
             embed = self.text_encoder(text_input.input_ids.to(self.device))[0]
         return embed
 
+    @functools.lru_cache()
+    def embed_text_weighted(self, text):
+        """
+        Get text embedding with weights.
+        """
+        from .prompt_weighting import get_weighted_text_embeddings
+
+        return get_weighted_text_embeddings(
+            pipe=self,
+            prompt=text,
+            uncond_prompt=None,
+            max_embeddings_multiples=3,
+            no_boseos_middle=False,
+            skip_parsing=False,
+            skip_weighting=False,
+        )[0]
+
     @torch.no_grad()
     def riffuse(
         self,
         inputs: InferenceInput,
         init_image: PIL.Image.Image,
         mask_image: PIL.Image.Image = None,
+        use_reweighting: bool = True,
     ) -> PIL.Image.Image:
         """
         Runs inference using interpolation with both img2img and text conditioning.
@@ -88,6 +106,7 @@ class RiffusionPipeline(DiffusionPipeline):
             mask_image: White pixels in the mask will be replaced by noise and therefore repainted,
                         while black pixels will be preserved. It will be converted to a single
                         channel (luminance) before use.
+            use_reweighting: Use prompt reweighting
         """
         alpha = inputs.alpha
         start = inputs.start
@@ -98,8 +117,12 @@ class RiffusionPipeline(DiffusionPipeline):
         generator_end = torch.Generator(device=self.device).manual_seed(end.seed)
 
         # Text encodings
-        embed_start = self.embed_text(start.prompt)
-        embed_end = self.embed_text(end.prompt)
+        if use_reweighting:
+            embed_start = self.embed_text_weighted(start.prompt)
+            embed_end = self.embed_text_weighted(end.prompt)
+        else:
+            embed_start = self.embed_text(start.prompt)
+            embed_end = self.embed_text(end.prompt)
         text_embedding = torch.lerp(embed_start, embed_end, alpha)
 
         # Image latents
