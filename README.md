@@ -38,31 +38,31 @@ The model endpoint is now available at `http://127.0.0.1:3013/run_inference` via
 Example input (see [InferenceInput](https://github.com/hmartiro/riffusion-inference/blob/main/riffusion/datatypes.py#L28) for the API):
 ```
 {
-  alpha: 0.75,
-  num_inference_steps: 50,
-  seed_image_id: "og_beat",
+  "alpha": 0.75,
+  "num_inference_steps": 50,
+  "seed_image_id": "og_beat",
 
-  start: {
-    prompt: "church bells on sunday",
-    seed: 42,
-    denoising: 0.75,
-    guidance: 7.0,
+  "start": {
+    "prompt": "church bells on sunday",
+    "seed": 42,
+    "denoising": 0.75,
+    "guidance": 7.0
   },
 
-  end: {
-    prompt: "jazz with piano",
-    seed: 123,
-    denoising: 0.75,
-    guidance: 7.0,
-  },
+  "end": {
+    "prompt": "jazz with piano",
+    "seed": 123,
+    "denoising": 0.75,
+    "guidance": 7.0
+  }
 }
 ```
 
 Example output (see [InferenceOutput](https://github.com/hmartiro/riffusion-inference/blob/main/riffusion/datatypes.py#L54) for the API):
 ```
 {
-  image: "< base64 encoded JPEG image >",
-  audio: "< base64 encoded MP3 clip >",,
+  "image": "< base64 encoded JPEG image >",
+  "audio": "< base64 encoded MP3 clip >"
 }
 ```
 
