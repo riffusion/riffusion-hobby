@@ -105,9 +105,11 @@ def image_from_spectrogram(
 
     # Flip Y
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    
+    # Convert to RGB
+    image = image.convert("RGB")
 
     return image
-
 
 def spectrogram_from_waveform(
     waveform: np.ndarray,
