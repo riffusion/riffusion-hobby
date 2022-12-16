@@ -85,6 +85,29 @@ def spectrogram_from_image(
 
     return data
 
+def image_from_spectrogram(
+    spectrogram: np.ndarray, max_volume: float = 50, power_for_image: float = 0.25
+) -> Image.Image:
+    """
+    Compute a spectrogram image from a spectrogram magnitude array.
+    """
+    # Apply the power curve
+    data = np.power(spectrogram, power_for_image)
+
+    # Rescale to 0-255
+    data = data * 255 / max_volume
+
+    # Invert
+    data = 255 - data
+
+    # Convert to a PIL image
+    image = Image.fromarray(data.astype(np.uint8))
+
+    # Flip Y
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+
+    return image
+
 
 def spectrogram_from_waveform(
     waveform: np.ndarray,
