@@ -93,9 +93,12 @@ def image_from_spectrogram(
     """
     # Apply the power curve
     data = np.power(spectrogram, power_for_image)
+    
+    # Rescale to 0-1
+    data = data / np.max(data)
 
     # Rescale to 0-255
-    data = data * 255 / max_volume
+    data = data * 255
 
     # Invert
     data = 255 - data
