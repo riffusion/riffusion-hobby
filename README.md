@@ -71,7 +71,7 @@ Example output (see [InferenceOutput](https://github.com/hmartiro/riffusion-infe
 If you build on this work, please cite it as follows:
 
 ```
-@software{Forsgren_Martiros_2022,
+@article{Forsgren_Martiros_2022,
   author = {Forsgren, Seth* and Martiros, Hayk*},
   title = {{Riffusion - Stable diffusion for real-time music generation}},
   url = {https://riffusion.com/about},
