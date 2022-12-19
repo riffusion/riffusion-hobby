@@ -14,6 +14,7 @@ This repository contains the Python backend does the model inference and audio p
  * a module for (approximately) converting between spectrograms and waveforms
  * a flask server to provide model inference via API to the next.js app
  * a model template titled baseten.py for deploying as a Truss
+ * a cog.yaml and predict.py file for running inference through cog
 
 
 ## Install
@@ -65,6 +66,19 @@ Example output (see [InferenceOutput](https://github.com/hmartiro/riffusion-infe
   "audio": "< base64 encoded MP3 clip >"
 }
 ```
+
+## Cog
+To run riffusion as a Cog model, first, [install Cog](https://github.com/replicate/cog) and download the model weights:
+
+    cog run python predict.py --download_weights
+
+Then you can run predictions:
+
+    cog predict -i prompt_a="funky synth solo"
+    
+You can also view the model on replicate [here](https://replicate.com/hmartiro/riffusion), and push it (if you own the model) like so:
+
+    cog push r8.im/hmartiro/riffusion
 
 ## Citation
 
