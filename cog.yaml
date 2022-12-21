@@ -34,4 +34,4 @@ build:
     # - "echo another command if needed"
 
 # predict.py defines how predictions are run on your model
-predict: "predict.py:RiffusionPredictor"
+predict: "riffusion/cog_riffusion.py:RiffusionPredictor"
