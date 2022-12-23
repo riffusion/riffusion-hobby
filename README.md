@@ -1,11 +1,11 @@
-# Riffusion Inference Server
+# Riffusion
 
-Riffusion is an app for real-time music generation with stable diffusion.
+Riffusion is a technique for real-time music and audio generation with stable diffusion.
 
 Read about it at https://www.riffusion.com/about and try it at https://www.riffusion.com/.
 
-* Web app: https://github.com/hmartiro/riffusion-app
-* Inference server: https://github.com/hmartiro/riffusion-inference
+* Inference server: https://github.com/riffusion/riffusion
+* Web app: https://github.com/riffusion/riffusion-app
 * Model checkpoint: https://huggingface.co/riffusion/riffusion-model-v1
 
 This repository contains the Python backend does the model inference and audio processing, including:
@@ -17,13 +17,24 @@ This repository contains the Python backend does the model inference and audio p
 
 
 ## Install
-Tested with Python 3.9 and diffusers 0.9.0
+
+Tested with Python 3.9 and diffusers 0.9.0.
+
+To run this model, you need a GPU with CUDA. To run it in real time, it needs to be able to run stable diffusion with approximately 50 steps in under five seconds.
+
+You need to make sure you have torch and torchaudio installed with CUDA support. See the [install guide](https://pytorch.org/get-started/locally/) or [stable wheels](https://download.pytorch.org/whl/torch_stable.html). 
 
 ```
 conda create --name riffusion-inference python=3.9
 conda activate riffusion-inference
 python -m pip install -r requirements.txt
 ```
+
+If torchaudio has no audio backend, see [this issue](https://github.com/riffusion/riffusion/issues/12).
+
+Guides:
+* [CUDA help](https://github.com/riffusion/riffusion/issues/3)
+* [Windows Simple Instructions](https://www.reddit.com/r/riffusion/comments/zrubc9/installation_guide_for_riffusion_app_inference/)
 
 ## Run
 Start the Flask server:
