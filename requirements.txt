@@ -8,6 +8,7 @@ numpy
 pillow
 pydub
 scipy
+soundfile
 torch
 torchaudio
 transformers
