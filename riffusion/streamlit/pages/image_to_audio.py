@@ -1,11 +1,7 @@
-import io
 
 import streamlit as st
 from PIL import Image
 
-from riffusion.spectrogram_image_converter import SpectrogramImageConverter
-from riffusion.spectrogram_params import SpectrogramParams
-from riffusion.streamlit import util as streamlit_util
 from riffusion.util.image_util import exif_from_image
 
 
@@ -26,13 +22,13 @@ def render_image_to_audio() -> None:
     st.write("Exif data:")
     st.write(exif)
 
-    device = "cuda"
+    # device = "cuda"
 
-    try:
-        params = SpectrogramParams.from_exif(exif=image.getexif())
-    except KeyError:
-        st.warning("Could not find spectrogram parameters in exif data. Using defaults.")
-        params = SpectrogramParams()
+    # try:
+    #     params = SpectrogramParams.from_exif(exif=image.getexif())
+    # except KeyError:
+    #     st.warning("Could not find spectrogram parameters in exif data. Using defaults.")
+    #     params = SpectrogramParams()
 
     # segment = streamlit_util.audio_from_spectrogram_image(
     #     image=image,
