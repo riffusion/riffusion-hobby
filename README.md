@@ -176,7 +176,7 @@ To preserve temporary outputs for debugging, set `RIFFUSION_TEST_DEBUG`:
 RIFFUSION_TEST_DEBUG=1 python -m unittest test.audio_to_image_test
 ```
 
-To run a single test case:
+To run a single test case within a test:
 ```
 python -m unittest test.audio_to_image_test -k AudioToImageTest.test_stereo
 ```
