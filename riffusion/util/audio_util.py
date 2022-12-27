@@ -32,7 +32,7 @@ def audio_from_waveform(
     return pydub.AudioSegment.from_wav(wav_bytes)
 
 
-def apply_filters(segment: pydub.AudioSegment) -> pydub.AudioSegment:
+def apply_filters(segment: pydub.AudioSegment, compression: bool = False) -> pydub.AudioSegment:
     """
     Apply post-processing filters to the audio segment to compress it and
     keep at a -10 dBFS level.
@@ -40,20 +40,22 @@ def apply_filters(segment: pydub.AudioSegment) -> pydub.AudioSegment:
     # TODO(hayk): Come up with a principled strategy for these filters and experiment end-to-end.
     # TODO(hayk): Is this going to make audio unbalanced between sequential clips?
 
-    segment = pydub.effects.normalize(
-        segment,
-        headroom=0.1,
-    )
+    if compression:
+        segment = pydub.effects.normalize(
+            segment,
+            headroom=0.1,
+        )
 
-    segment = segment.apply_gain(-10 - segment.dBFS)
+        segment = segment.apply_gain(-10 - segment.dBFS)
 
-    segment = pydub.effects.compress_dynamic_range(
-        segment,
-        threshold=-20.0,
-        ratio=4.0,
-        attack=5.0,
-        release=50.0,
-    )
+        # TODO(hayk): This is quite slow, ~1.7 seconds on a beefy CPU
+        segment = pydub.effects.compress_dynamic_range(
+            segment,
+            threshold=-20.0,
+            ratio=4.0,
+            attack=5.0,
+            release=50.0,
+        )
 
     desired_db = -12
     segment = segment.apply_gain(desired_db - segment.dBFS)

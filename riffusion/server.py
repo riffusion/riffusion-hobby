@@ -155,8 +155,9 @@ def compute_request(
     )
 
     # Reconstruct audio from the image
-    # TODO(hayk): It may help performance to cache this object
+    # TODO(hayk): It may help performance a bit to cache this object
     converter = SpectrogramImageConverter(params=params, device=str(pipeline.device))
+
     segment = converter.audio_from_spectrogram_image(
         image,
         apply_filters=True,

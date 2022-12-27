@@ -108,9 +108,9 @@ Execute:
 python -m riffusion.cli image-to-audio --image spectrogram_image.png --audio clip.wav
 ```
 
-## Streamlit playground
+## Riffusion Playground
 
-Riffusion also has a streamlit app for interactive use and exploration.
+Riffusion also has a [streamlit](https://streamlit.io/) app for interactive use and exploration.
 This app is called the Riffusion Playground.
 
 Run with:
