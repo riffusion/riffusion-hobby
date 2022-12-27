@@ -1,6 +1,6 @@
 import numpy as np
-from PIL import Image
 import pydub
+from PIL import Image
 
 from riffusion.spectrogram_converter import SpectrogramConverter
 from riffusion.spectrogram_params import SpectrogramParams

@@ -1,12 +1,12 @@
+import warnings
+
 import numpy as np
 import pydub
 import torch
 import torchaudio
-import warnings
 
 from riffusion.spectrogram_params import SpectrogramParams
-from riffusion.util import audio_util
-from riffusion.util import torch_util
+from riffusion.util import audio_util, torch_util
 
 
 class SpectrogramConverter:

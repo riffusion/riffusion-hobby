@@ -12,7 +12,7 @@ select = [
     "E",
     "W",
     # isort
-    # "I001"
+    "I001"
 ]
 
 ignore = []

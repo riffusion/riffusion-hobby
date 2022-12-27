@@ -9,15 +9,14 @@ import inspect
 import typing as T
 
 import numpy as np
-from PIL import Image
 import torch
-
 from diffusers.models import AutoencoderKL, UNet2DConditionModel
 from diffusers.pipeline_utils import DiffusionPipeline
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 from diffusers.schedulers import DDIMScheduler, LMSDiscreteScheduler, PNDMScheduler
 from diffusers.utils import logging
 from huggingface_hub import hf_hub_download
+from PIL import Image
 from transformers import CLIPFeatureExtractor, CLIPTextModel, CLIPTokenizer
 
 from riffusion.datatypes import InferenceInput

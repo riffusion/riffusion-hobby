@@ -3,21 +3,19 @@ Flask server that serves the riffusion model as an API.
 """
 
 import dataclasses
-import logging
 import io
 import json
-from pathlib import Path
+import logging
 import time
 import typing as T
+from pathlib import Path
 
 import dacite
 import flask
-
-from flask_cors import CORS
 import PIL
+from flask_cors import CORS
 
-from riffusion.datatypes import InferenceInput
-from riffusion.datatypes import InferenceOutput
+from riffusion.datatypes import InferenceInput, InferenceOutput
 from riffusion.riffusion_pipeline import RiffusionPipeline
 from riffusion.spectrogram_image_converter import SpectrogramImageConverter
 from riffusion.spectrogram_params import SpectrogramParams
