@@ -12,19 +12,21 @@ def render_text_to_audio() -> None:
     """
     prompt = st.text_input("Prompt")
     negative_prompt = st.text_input("Negative prompt")
-    seed = T.cast(int, st.sidebar.number_input("Seed", value=42))
-    num_inference_steps = T.cast(int, st.sidebar.number_input("Inference steps", value=50))
-    width = T.cast(int, st.sidebar.number_input("Width", value=512))
-    height = T.cast(int, st.sidebar.number_input("Height", value=512))
-    guidance = st.sidebar.number_input(
-        "Guidance", value=7.0, help="How much the model listens to the text prompt"
-    )
+
+    device = streamlit_util.select_device(st.sidebar)
+
+    with st.sidebar.expander("Text to Audio Params", expanded=True):
+        seed = T.cast(int, st.number_input("Seed", value=42))
+        num_inference_steps = T.cast(int, st.number_input("Inference steps", value=50))
+        width = T.cast(int, st.number_input("Width", value=512))
+        height = T.cast(int, st.number_input("Height", value=512))
+        guidance = st.number_input(
+            "Guidance", value=7.0, help="How much the model listens to the text prompt"
+        )
 
     if not prompt:
         st.info("Enter a prompt")
         return
-
-    device = streamlit_util.select_device(st.sidebar)
 
     image = streamlit_util.run_txt2img(
         prompt=prompt,
