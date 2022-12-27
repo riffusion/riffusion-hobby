@@ -155,7 +155,10 @@ class SpectrogramConverter:
 
         # Optionally apply post-processing filters
         if apply_filters:
-            segment = audio_util.apply_filters(segment)
+            segment = audio_util.apply_filters(
+                segment,
+                compression=False,
+            )
 
         return segment
 
