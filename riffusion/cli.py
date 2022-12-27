@@ -6,8 +6,8 @@ from pathlib import Path
 
 import argh
 import numpy as np
-from PIL import Image
 import pydub
+from PIL import Image
 
 from riffusion.spectrogram_image_converter import SpectrogramImageConverter
 from riffusion.spectrogram_params import SpectrogramParams
