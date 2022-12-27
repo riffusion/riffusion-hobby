@@ -10,6 +10,7 @@ plotly
 pydub
 scipy
 soundfile
+sox
 streamlit
 torch
 torchaudio
