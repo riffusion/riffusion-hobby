@@ -22,7 +22,7 @@ Tested with Python 3.9 and diffusers 0.9.0.
 
 To run this model, you need a GPU with CUDA. To run it in real time, it needs to be able to run stable diffusion with approximately 50 steps in under five seconds.
 
-You need to make sure you have torch and torchaudio installed with CUDA support. See the [install guide](https://pytorch.org/get-started/locally/) or [stable wheels](https://download.pytorch.org/whl/torch_stable.html). 
+You need to make sure you have torch and torchaudio installed with CUDA support. See the [install guide](https://pytorch.org/get-started/locally/) or [stable wheels](https://download.pytorch.org/whl/torch_stable.html).
 
 ```
 conda create --name riffusion-inference python=3.9
@@ -32,14 +32,16 @@ python -m pip install -r requirements.txt
 
 If torchaudio has no audio backend, see [this issue](https://github.com/riffusion/riffusion/issues/12).
 
+You can open and save WAV files with pure python. For opening and saving non-wav files – like mp3 – you'll need ffmpeg or libav.
+
 Guides:
 * [CUDA help](https://github.com/riffusion/riffusion/issues/3)
 * [Windows Simple Instructions](https://www.reddit.com/r/riffusion/comments/zrubc9/installation_guide_for_riffusion_app_inference/)
 
-## Run
+## Run the model server
 Start the Flask server:
 ```
-python -m riffusion.server --port 3013 --host 127.0.0.1
+python -m riffusion.server --host 127.0.0.1 --port 3013
 ```
 
 You can specify `--checkpoint` with your own directory or huggingface ID in diffusers format.
@@ -76,6 +78,52 @@ Example output (see [InferenceOutput](https://github.com/hmartiro/riffusion-infe
   "audio": "< base64 encoded MP3 clip >"
 }
 ```
+
+Use the `--device` argument to specify the torch device to use.
+
+`cuda` is recommended.
+
+`cpu` works but is quite slow.
+
+`mps` is supported for inference, but some operations fall back to CPU. You may need to set
+PYTORCH_ENABLE_MPS_FALLBACK=1. In addition, it is not deterministic.
+
+## Test
+Tests live in the `test/` directory and are implemented with `unittest`.
+
+To run all tests:
+```
+python -m unittest test/*_test.py
+```
+
+To run a single test:
+```
+python -m unittest test.audio_to_image_test
+```
+
+To preserve temporary outputs for debugging, set `RIFFUSION_TEST_DEBUG`:
+```
+RIFFUSION_TEST_DEBUG=1 python -m unittest test.audio_to_image_test
+```
+
+To run a single test case:
+```
+python -m unittest test.audio_to_image_test -k AudioToImageTest.test_stereo
+```
+
+To run tests using a specific torch device, set `RIFFUSION_TEST_DEVICE`. Tests should pass with
+`cpu`, `cuda`, and `mps` backends.
+
+## Development
+Install additional packages for dev with `pip install -r dev_requirements.txt`.
+
+* Linter: `ruff`
+* Formatter: `black`
+* Type checker: `mypy`
+
+These are configured in `pyproject.toml`.
+
+The results of `mypy .`, `black .`, and `ruff .` *must* be clean to accept a PR.
 
 ## Citation
 
