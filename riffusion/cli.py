@@ -116,9 +116,6 @@ def sample_clips(
     if not output_dir_path.exists():
         output_dir_path.mkdir(parents=True)
 
-    # TODO(hayk): Might be a lot easier with pydub
-    # https://github.com/jiaaro/pydub/blob/master/API.markdown#audiosegmentfrom_file
-
     segment_duration_ms = int(segment.duration_seconds * 1000)
     for i in range(num_clips):
         clip_start_ms = np.random.randint(0, segment_duration_ms - duration_ms)

@@ -13,6 +13,8 @@ from riffusion.riffusion_pipeline import RiffusionPipeline
 from riffusion.spectrogram_image_converter import SpectrogramImageConverter
 from riffusion.spectrogram_params import SpectrogramParams
 
+# TODO(hayk): Add URL params
+
 
 @st.experimental_singleton
 def load_riffusion_checkpoint(
@@ -53,7 +55,6 @@ def load_stable_diffusion_pipeline(
     ).to(device)
 
 
-
 @st.experimental_memo
 def run_txt2img(
     prompt: str,
@@ -84,25 +85,6 @@ def run_txt2img(
     )
 
     return output["images"][0]
-
-
-# class CachedSpectrogramImageConverter:
-
-#     def __init__(self, params: SpectrogramParams, device: str = "cuda"):
-#         self.p = params
-#         self.device = device
-#         self.converter = self._converter(params, device)
-
-#     @staticmethod
-#     @st.experimental_singleton
-#     def _converter(params: SpectrogramParams, device: str) -> SpectrogramImageConverter:
-#          return SpectrogramImageConverter(params=params, device=device)
-
-#     def audio_from_spectrogram_image(
-#         self,
-#         image: Image.Image
-#     ) -> pydub.AudioSegment:
-#         return self._converter.audio_from_spectrogram_image(image)
 
 
 @st.experimental_singleton
@@ -147,13 +129,3 @@ def select_device(container: T.Any = st.sidebar) -> str:
     assert device is not None
 
     return device
-
-
-# @st.experimental_memo
-# def spectrogram_image_from_audio(
-#     segment: pydub.AudioSegment,
-#     params: SpectrogramParams,
-#     device: str = "cuda",
-# ) -> pydub.AudioSegment:
-#     converter = spectrogram_image_converter(params=params, device=device)
-#     return converter.spectrogram_image_from_audio(segment)
