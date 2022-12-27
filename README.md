@@ -36,21 +36,26 @@ If you build on this work, please cite it as follows:
 
 Tested with Python 3.9 + 3.10 and diffusers 0.9.0.
 
-To run this model in real time, you need a GPU that can run stable diffusion with approximately 50
-steps in under five seconds. A 3090 or A10G will do it.
-
-Install in a virtual Python environment:
+It's highly recommended to set up a virtual Python environment with `conda` or `virtualenv`:
 ```
 conda create --name riffusion python=3.9
 conda activate riffusion
+```
+
+Install Python dependencies:
+```
 python -m pip install -r requirements.txt
+```
+
+In order to use audio formats other than WAV, `ffmpeg` is required.
+```
+sudo apt-get install ffmpeg  # linux
+brew install ffmpeg  # mac
+conda install -c conda-forge ffmpeg  # conda
 ```
 
 If torchaudio has no audio backend, see
 [this issue](https://github.com/riffusion/riffusion/issues/12).
-
-You can open and save WAV files with pure python. For opening and saving non-wav files – like mp3 –
-you'll need to install ffmpeg with `suod apt-get install ffmpeg` or `brew install ffmpeg`.
 
 Guides:
 * [Windows Simple Instructions](https://www.reddit.com/r/riffusion/comments/zrubc9/installation_guide_for_riffusion_app_inference/)
@@ -68,6 +73,9 @@ To use with CUDA, make sure you have torch and torchaudio installed with CUDA su
 import torch
 torch.cuda.is_available()
 ```
+
+To generate audio in real-time, you need a GPU that can run stable diffusion with approximately 50
+steps in under five seconds, such as a 3090 or A10G.
 
 Also see [this issue](https://github.com/riffusion/riffusion/issues/3) for help.
 
@@ -87,7 +95,7 @@ Riffusion comes with a command line interface for performing common tasks.
 
 See available commands:
 ```
-python -m riffusion-cli -h
+python -m riffusion.cli -h
 ```
 
 Get help for a specific command:
@@ -107,8 +115,7 @@ This app is called the Riffusion Playground.
 
 Run with:
 ```
-python -m streamlit run riffusion/streamlit/playground.py --browser.serverAddress 127.0.0.1 --bro
-wser.serverPort 8501
+python -m streamlit run riffusion/streamlit/playground.py --browser.serverAddress 127.0.0.1 --browser.serverPort 8501
 ```
 
 And access at http://127.0.0.1:8501/
@@ -185,7 +192,7 @@ To run tests using a specific torch device, set `RIFFUSION_TEST_DEVICE`. Tests s
 `cpu`, `cuda`, and `mps` backends.
 
 ## Development
-Install additional packages for dev with `pip install -r dev_requirements.txt`.
+Install additional packages for dev with `python -m pip install -r dev_requirements.txt`.
 
 * Linter: `ruff`
 * Formatter: `black`
