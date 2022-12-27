@@ -1,5 +1,9 @@
 # :guitar: Riffusion
 
+<a href="https://github.com/riffusion/riffusion/actions/workflows/ci.yml?query=branch%3Amain"><img alt="CI status" src="https://github.com/riffusion/riffusion/actions/workflows/ci.yml/badge.svg" /></a>
+<img alt="Python 3.9 | 3.10" src="https://img.shields.io/badge/Python-3.9%20%7C%203.10-blue" />
+<a href="https://github.com/riffusion/riffusion/tree/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-yellowgreen" /></a>
+
 Riffusion is a library for real-time music and audio generation with stable diffusion.
 
 Read about it at https://www.riffusion.com/about and try it at https://www.riffusion.com/.
@@ -117,8 +121,7 @@ python -m riffusion.cli image-to-audio --image spectrogram_image.png --audio cli
 
 ## Riffusion Playground
 
-Riffusion also has a [streamlit](https://streamlit.io/) app for interactive use and exploration.
-This app is called the Riffusion Playground.
+Riffusion contains a [streamlit](https://streamlit.io/) app for interactive use and exploration.
 
 Run with:
 ```
@@ -126,6 +129,8 @@ python -m streamlit run riffusion/streamlit/playground.py --browser.serverAddres
 ```
 
 And access at http://127.0.0.1:8501/
+
+<img alt="Riffusion Playground" style="width: 600px" src="https://i.imgur.com/OOMKBbT.png" />
 
 ## Run the model server
 
