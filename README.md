@@ -1,19 +1,17 @@
-# Riffusion
+# :guitar: Riffusion
 
 Riffusion is a library for real-time music and audio generation with stable diffusion.
 
 Read about it at https://www.riffusion.com/about and try it at https://www.riffusion.com/.
 
-This repository contains the core riffusion image and audio processing code and supporting apps,
-including:
+This is the core repository for riffusion image and audio processing code.
 
- * diffusion pipeline that performs prompt interpolation combined with image conditioning
- * package for (approximately) converting between spectrogram images and audio clips
- * interactive playground using streamlit
- * command-line tool for common tasks
- * flask server to provide model inference via API
- * various third party integrations
- * test suite
+ * Diffusion pipeline that performs prompt interpolation combined with image conditioning
+ * Conversions between spectrogram images and audio clips
+ * Command-line interface for common tasks
+ * Interactive app using streamlit
+ * Flask server to provide model inference via API
+ * Various third party integrations
 
 Related repositories:
 * Web app: https://github.com/riffusion/riffusion-app
@@ -34,7 +32,7 @@ If you build on this work, please cite it as follows:
 
 ## Install
 
-Tested with Python 3.9 + 3.10 and diffusers 0.9.0.
+Tested in CI with Python 3.9 and 3.10.
 
 It's highly recommended to set up a virtual Python environment with `conda` or `virtualenv`:
 ```
@@ -47,47 +45,56 @@ Install Python dependencies:
 python -m pip install -r requirements.txt
 ```
 
-In order to use audio formats other than WAV, `ffmpeg` is required.
+In order to use audio formats other than WAV, [ffmpeg](https://ffmpeg.org/download.html) is required.
 ```
-sudo apt-get install ffmpeg  # linux
-brew install ffmpeg  # mac
+sudo apt-get install ffmpeg          # linux
+brew install ffmpeg                  # mac
 conda install -c conda-forge ffmpeg  # conda
 ```
 
 If torchaudio has no audio backend, see
 [this issue](https://github.com/riffusion/riffusion/issues/12).
 
+If you have an issue, try upgrading [diffusers](https://github.com/huggingface/diffusers). Tested with 0.9 - 0.11.
+
 Guides:
-* [Windows Simple Instructions](https://www.reddit.com/r/riffusion/comments/zrubc9/installation_guide_for_riffusion_app_inference/)
+* [Simple Install Guide for Windows](https://www.reddit.com/r/riffusion/comments/zrubc9/installation_guide_for_riffusion_app_inference/)
 
 ## Backends
 
-#### CUDA
+### CPU
+`cpu` is supported but is quite slow.
+
+### CUDA
 `cuda` is the recommended and most performant backend.
 
 To use with CUDA, make sure you have torch and torchaudio installed with CUDA support. See the
 [install guide](https://pytorch.org/get-started/locally/) or
-[stable wheels](https://download.pytorch.org/whl/torch_stable.html). Check with:
+[stable wheels](https://download.pytorch.org/whl/torch_stable.html).
+
+To generate audio in real-time, you need a GPU that can run stable diffusion with approximately 50
+steps in under five seconds, such as a 3090 or A10G.
+
+Test availability with:
 
 ```python3
 import torch
 torch.cuda.is_available()
 ```
 
-To generate audio in real-time, you need a GPU that can run stable diffusion with approximately 50
-steps in under five seconds, such as a 3090 or A10G.
-
-Also see [this issue](https://github.com/riffusion/riffusion/issues/3) for help.
-
-#### CPU
-`cpu` works but is quite slow.
-
-#### MPS
+### MPS
 The `mps` backend on Apple Silicon is supported for inference but some operations fall back to CPU,
 particularly for audio processing. You may need to set
-PYTORCH_ENABLE_MPS_FALLBACK=1.
+`PYTORCH_ENABLE_MPS_FALLBACK=1`.
 
 In addition, this backend is not deterministic.
+
+Test availability with:
+
+```python3
+import torch
+torch.backends.mps.is_available()
+```
 
 ## Command-line interface
 
@@ -122,7 +129,9 @@ And access at http://127.0.0.1:8501/
 
 ## Run the model server
 
-Riffusion can be run as a flask server that provides inference via API. Run with:
+Riffusion can be run as a flask server that provides inference via API. This server enables the [web app](https://github.com/riffusion/riffusion-app) to run locally.
+
+Run with:
 
 ```
 python -m riffusion.server --host 127.0.0.1 --port 3013
@@ -165,7 +174,7 @@ Example output (see [InferenceOutput](https://github.com/hmartiro/riffusion-infe
 }
 ```
 
-## Test
+## Tests
 Tests live in the `test/` directory and are implemented with `unittest`.
 
 To run all tests:
@@ -191,7 +200,7 @@ python -m unittest test.audio_to_image_test -k AudioToImageTest.test_stereo
 To run tests using a specific torch device, set `RIFFUSION_TEST_DEVICE`. Tests should pass with
 `cpu`, `cuda`, and `mps` backends.
 
-## Development
+## Development Guide
 Install additional packages for dev with `python -m pip install -r dev_requirements.txt`.
 
 * Linter: `ruff`
@@ -204,4 +213,4 @@ The results of `mypy .`, `black .`, and `ruff .` *must* be clean to accept a PR.
 
 CI is run through GitHub Actions from `.github/workflows/ci.yml`.
 
-Contributions are welcome through opening pull requests.
+Contributions are welcome through pull requests.
