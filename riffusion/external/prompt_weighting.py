@@ -5,6 +5,9 @@ This code is taken from the diffusers community pipeline:
 
 License: Apache 2.0
 """
+# ruff: noqa
+# mypy: ignore-errors
+
 import re
 from typing import List, Optional, Union
 
@@ -193,7 +196,7 @@ def get_unweighted_text_embeddings(
     text_input: torch.Tensor,
     chunk_length: int,
     no_boseos_middle: Optional[bool] = True,
-):
+) -> torch.FloatTensor:
     """
     When the length of tokens is a multiple of the capacity of the text encoder,
     it should be split into chunks and sent to the text encoder individually.
@@ -239,7 +242,7 @@ def get_weighted_text_embeddings(
     skip_parsing: Optional[bool] = False,
     skip_weighting: Optional[bool] = False,
     **kwargs,
-):
+) -> T.Tuple[torch.FloatTensor, T.Optional[torch.FloatTensor]]:
     r"""
     Prompts can be assigned with local weights using brackets. For example,
     prompt 'A (very beautiful) masterpiece' highlights the words 'very beautiful',
@@ -269,8 +272,6 @@ def get_weighted_text_embeddings(
 
     if not skip_parsing:
         prompt_tokens, prompt_weights = get_prompts_with_weights(pipe, prompt, max_length - 2)
-        print(f"tokens: {prompt_tokens}")
-        print(f"weights: {prompt_weights}")
 
         if uncond_prompt is not None:
             if isinstance(uncond_prompt, str):
