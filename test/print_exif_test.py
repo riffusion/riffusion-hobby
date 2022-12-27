@@ -28,5 +28,5 @@ class PrintExifTest(TestCase):
             print_exif(image=str(image_path))
 
         # Check that a couple of values are printed
-        self.assertTrue("NUM_FREQUENCIES: 512" in stdout.getvalue())
-        self.assertTrue("SAMPLE_RATE: 44100" in stdout.getvalue())
+        self.assertTrue("NUM_FREQUENCIES      =             512" in stdout.getvalue())
+        self.assertTrue("SAMPLE_RATE          =           44100" in stdout.getvalue())
