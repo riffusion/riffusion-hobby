@@ -8,7 +8,7 @@ from riffusion.spectrogram_image_converter import SpectrogramImageConverter
 from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.util import fft_util
 
-from .test_case import TestCase
+from test_case import TestCase
 
 
 class SpectrogramImageConverterTest(TestCase):
@@ -52,6 +52,11 @@ class SpectrogramImageConverterTest(TestCase):
             max_frequency=20000,
             num_frequencies=512,
         )
+
+        param_sets["triple_res_mono"] = dataclasses.replace(
+                param_sets["default"],
+                triple_res_mono=True,
+            )
 
         if self.DEBUG:
             param_sets["freq_0_to_10k"] = dataclasses.replace(

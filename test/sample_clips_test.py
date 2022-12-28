@@ -4,7 +4,7 @@ import pydub
 
 from riffusion.cli import sample_clips
 
-from .test_case import TestCase
+from test_case import TestCase
 
 
 class SampleClipsTest(TestCase):

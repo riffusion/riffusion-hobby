@@ -52,6 +52,7 @@ class SpectrogramImageConverter:
         image = image_util.image_from_spectrogram(
             spectrogram,
             power=self.p.power_for_image,
+            triple_res_mono=self.p.triple_res_mono,
         )
 
         # Store conversion params in exif metadata of the image
@@ -81,6 +82,7 @@ class SpectrogramImageConverter:
             max_value=max_value,
             power=self.p.power_for_image,
             stereo=self.p.stereo,
+            triple_res_mono=self.p.triple_res_mono,
         )
 
         segment = self.converter.audio_from_spectrogram(

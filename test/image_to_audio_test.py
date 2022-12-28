@@ -4,7 +4,7 @@ import pydub
 
 from riffusion.cli import image_to_audio
 
-from .test_case import TestCase
+from test_case import TestCase
 
 
 class ImageToAudioTest(TestCase):
@@ -26,9 +26,19 @@ class ImageToAudioTest(TestCase):
             stereo=True,
         )
 
-    def helper_image_to_audio(self, song_dir: Path, clip_name: str, stereo: bool) -> None:
+    def test_image_to_audio_triple_res_mono(self) -> None:
+        self.helper_image_to_audio(
+            song_dir=self.TEST_DATA_PATH / "tired_traveler",
+            clip_name="clip_2_start_103694_ms_duration_5678_ms",
+            stereo=False,
+            triple_res_mono=True,
+        )
+
+    def helper_image_to_audio(self, song_dir: Path, clip_name: str, stereo: bool, triple_res_mono: bool = False) -> None:
         if stereo:
             image_stem = clip_name + "_stereo"
+        elif triple_res_mono:
+            image_stem = clip_name + "_triple_res_mono"
         else:
             image_stem = clip_name
 

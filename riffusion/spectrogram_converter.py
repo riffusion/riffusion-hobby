@@ -72,9 +72,13 @@ class SpectrogramConverter:
             rand_init=True,
         ).to(self.device)
 
+        n_mels = params.num_frequencies
+        if params.triple_res_mono:
+            n_mels *= 3
+
         # https://pytorch.org/audio/stable/generated/torchaudio.transforms.MelScale.html
         self.mel_scaler = torchaudio.transforms.MelScale(
-            n_mels=params.num_frequencies,
+            n_mels=n_mels,
             sample_rate=params.sample_rate,
             f_min=params.min_frequency,
             f_max=params.max_frequency,
@@ -86,7 +90,7 @@ class SpectrogramConverter:
         # https://pytorch.org/audio/stable/generated/torchaudio.transforms.InverseMelScale.html
         self.inverse_mel_scaler = torchaudio.transforms.InverseMelScale(
             n_stft=params.n_fft // 2 + 1,
-            n_mels=params.num_frequencies,
+            n_mels=n_mels,
             sample_rate=params.sample_rate,
             f_min=params.min_frequency,
             f_max=params.max_frequency,

@@ -5,7 +5,7 @@ from riffusion.spectrogram_converter import SpectrogramConverter
 from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.util import image_util
 
-from .test_case import TestCase
+from test_case import TestCase
 
 
 class ImageUtilTest(TestCase):
@@ -47,6 +47,7 @@ class ImageUtilTest(TestCase):
             max_value=max_value,
             power=params.power_for_image,
             stereo=params.stereo,
+            triple_res_mono=params.triple_res_mono,
         )
 
         # Check the shapes
