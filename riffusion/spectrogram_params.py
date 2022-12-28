@@ -17,7 +17,8 @@ class SpectrogramParams:
     # Whether the audio is stereo or mono
     stereo: bool = False
 
-    # Whether the spectrogram uses R,G,B channels to encode triple resolution of frequency data in mono
+    # Whether the spectrogram uses R,G,B channels
+    # to encode triple resolution of frequency data in mono
     triple_res_mono: bool = False
 
     # FFT parameters
@@ -104,14 +105,14 @@ class SpectrogramParams:
         Create a SpectrogramParams object from the EXIF tags of the given image.
         """
         return cls(
-            sample_rate=exif.get(cls.ExifTags.SAMPLE_RATE.value),
+            sample_rate=exif.get(cls.ExifTags.SAMPLE_RATE.value) or 0,
             stereo=bool(exif.get(cls.ExifTags.STEREO.value)),
             triple_res_mono=bool(exif.get(cls.ExifTags.TRIPLE_RES_MONO.value)),
-            step_size_ms=exif.get(cls.ExifTags.STEP_SIZE_MS.value),
-            window_duration_ms=exif.get(cls.ExifTags.WINDOW_DURATION_MS.value),
-            padded_duration_ms=exif.get(cls.ExifTags.PADDED_DURATION_MS.value),
-            num_frequencies=exif.get(cls.ExifTags.NUM_FREQUENCIES.value),
-            min_frequency=exif.get(cls.ExifTags.MIN_FREQUENCY.value),
-            max_frequency=exif.get(cls.ExifTags.MAX_FREQUENCY.value),
-            power_for_image=exif.get(cls.ExifTags.POWER_FOR_IMAGE.value),
+            step_size_ms=exif.get(cls.ExifTags.STEP_SIZE_MS.value) or 0,
+            window_duration_ms=exif.get(cls.ExifTags.WINDOW_DURATION_MS.value) or 0,
+            padded_duration_ms=exif.get(cls.ExifTags.PADDED_DURATION_MS.value) or 0,
+            num_frequencies=exif.get(cls.ExifTags.NUM_FREQUENCIES.value) or 0,
+            min_frequency=exif.get(cls.ExifTags.MIN_FREQUENCY.value) or 0,
+            max_frequency=exif.get(cls.ExifTags.MAX_FREQUENCY.value) or 0,
+            power_for_image=exif.get(cls.ExifTags.POWER_FOR_IMAGE.value) or 0,
         )

@@ -6,7 +6,7 @@ from PIL import Image
 from riffusion.cli import audio_to_image
 from riffusion.spectrogram_params import SpectrogramParams
 
-from test_case import TestCase
+from .test_case import TestCase
 
 
 class AudioToImageTest(TestCase):

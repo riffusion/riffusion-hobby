@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from test_case import TestCase
+from .test_case import TestCase
 
 
 class LinterTest(TestCase):

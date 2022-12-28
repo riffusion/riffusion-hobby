@@ -10,7 +10,9 @@ from PIL import Image
 from riffusion.spectrogram_params import SpectrogramParams
 
 
-def image_from_spectrogram(spectrogram: np.ndarray, power: float = 0.25, triple_res_mono = False) -> Image.Image:
+def image_from_spectrogram(
+    spectrogram: np.ndarray, power: float = 0.25, triple_res_mono=False
+) -> Image.Image:
     """
     Compute a spectrogram image from a spectrogram magnitude array.
 
@@ -45,9 +47,9 @@ def image_from_spectrogram(spectrogram: np.ndarray, power: float = 0.25, triple_
         if triple_res_mono:
             # Temporarily transpose so that reshaping will order data such that
             # each RGB pixel will represent 3 consecutive frequency bins along frequency axis
-            data = data.transpose(1,0,2)
+            data = data.transpose(1, 0, 2)
             data = data.reshape(data.shape[0] // 3, 3, data.shape[2])
-            data = data.transpose(0,2,1)
+            data = data.transpose(0, 2, 1)
             image = Image.fromarray(data, mode="RGB")
         else:
             # TODO(hayk): Do we want to write single channel to disk instead?
@@ -81,7 +83,8 @@ def spectrogram_from_image(
         image: (frequency, time, channels)
         power: The power curve applied to the spectrogram
         stereo: Whether the spectrogram encodes stereo data
-        triple_res_mono: Whether the spectrogram uses R,G,B channels to encode triple resolution of frequency data in mono
+        triple_res_mono: Whether the spectrogram uses R,G,B channels
+            to encode triple resolution of frequency data in mono
         max_value: The max value of the original spectrogram. In practice doesn't matter.
 
     Returns:
@@ -94,7 +97,7 @@ def spectrogram_from_image(
 
     if triple_res_mono:
         data = data.transpose(0, 2, 1)
-        data = data.reshape(1, data.shape[0]*data.shape[1], data.shape[2])
+        data = data.reshape(1, data.shape[0] * data.shape[1], data.shape[2])
     else:
         # Munge channels into a numpy array of (channels, frequency, time)
         data = data.transpose(2, 0, 1)
