@@ -59,6 +59,10 @@ module = "argh.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+module = "cog.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = "diffusers.*"
 ignore_missing_imports = true
 

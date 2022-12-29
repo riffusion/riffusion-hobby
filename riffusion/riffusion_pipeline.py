@@ -68,6 +68,8 @@ class RiffusionPipeline(DiffusionPipeline):
         channels_last: bool = False,
         dtype: torch.dtype = torch.float16,
         device: str = "cuda",
+        local_files_only: bool = False,
+        low_cpu_mem_usage: bool = False,
     ) -> RiffusionPipeline:
         """
         Load the riffusion model pipeline.
@@ -77,6 +79,8 @@ class RiffusionPipeline(DiffusionPipeline):
             use_traced_unet: Whether to use the traced unet for speedups
             device: Device to load the model on
             channels_last: Whether to use channels_last memory format
+            local_files_only: Don't download, only use local files
+            low_cpu_mem_usage: Attempt to use less memory on CPU
         """
         device = torch_util.check_device(device)
 
@@ -91,8 +95,8 @@ class RiffusionPipeline(DiffusionPipeline):
             # Disable the NSFW filter, causes incorrect false positives
             # TODO(hayk): Disable the "you have passed a non-standard module" warning from this.
             safety_checker=lambda images, **kwargs: (images, False),
-            # Optionally attempt to use less memory
-            low_cpu_mem_usage=False,
+            low_cpu_mem_usage=low_cpu_mem_usage,
+            local_files_only=local_files_only,
         ).to(device)
 
         if channels_last:
