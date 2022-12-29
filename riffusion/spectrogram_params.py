@@ -12,6 +12,9 @@ class SpectrogramParams:
 
     Includes helpers to convert to and from EXIF tags, allowing these parameters to be stored
     within spectrogram images.
+
+    To understand what these parameters do and to customize them, read `spectrogram_converter.py`
+    and the linked torchaudio documentation.
     """
 
     # Whether the audio is stereo or mono
