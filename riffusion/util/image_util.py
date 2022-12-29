@@ -77,6 +77,10 @@ def spectrogram_from_image(
     Returns:
         spectrogram: (channels, frequency, time)
     """
+    # Convert to RGB if single channel
+    if image.mode in ("P", "L"):
+        image = image.convert("RGB")
+
     # Flip Y
     image = image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
 
