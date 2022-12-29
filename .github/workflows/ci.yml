@@ -27,7 +27,7 @@ jobs:
 
       - name: Install system packages
         run: |
-          sudo apt-get install -y ffmpeg libsndfile
+          sudo apt-get install -y ffmpeg libsndfile1
 
       - name: Install pip packages from requirements.txt
         run: |
