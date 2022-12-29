@@ -25,9 +25,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install avconv
+      - name: Install system packages
         run: |
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg libsndfile
 
       - name: Install pip packages from requirements.txt
         run: |
