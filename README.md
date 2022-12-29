@@ -56,8 +56,7 @@ brew install ffmpeg                  # mac
 conda install -c conda-forge ffmpeg  # conda
 ```
 
-If torchaudio has no audio backend, see
-[this issue](https://github.com/riffusion/riffusion/issues/12).
+If torchaudio has no backend, you may need to install `libsndfile`. See [this issue](https://github.com/riffusion/riffusion/issues/12).
 
 If you have an issue, try upgrading [diffusers](https://github.com/huggingface/diffusers). Tested with 0.9 - 0.11.
 
