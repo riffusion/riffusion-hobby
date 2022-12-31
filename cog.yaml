@@ -22,7 +22,7 @@ build:
     - "flask_cors==3.0.10"
     - "flask==1.1.2"
     - "numpy==1.19.4"
-    - "pillow==8.2.0"
+    - "pillow==9.1.0"
     - "pydub==0.25.1"
     - "scipy==1.6.3"
     - "torch==1.13.0"
