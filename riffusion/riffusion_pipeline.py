@@ -70,6 +70,7 @@ class RiffusionPipeline(DiffusionPipeline):
         device: str = "cuda",
         local_files_only: bool = False,
         low_cpu_mem_usage: bool = False,
+        cache_dir: T.Optional[str] = None,
     ) -> RiffusionPipeline:
         """
         Load the riffusion model pipeline.
@@ -97,6 +98,7 @@ class RiffusionPipeline(DiffusionPipeline):
             safety_checker=lambda images, **kwargs: (images, False),
             low_cpu_mem_usage=low_cpu_mem_usage,
             local_files_only=local_files_only,
+            cache_dir=cache_dir,
         ).to(device)
 
         if channels_last:
@@ -111,6 +113,8 @@ class RiffusionPipeline(DiffusionPipeline):
                 in_channels=pipeline.unet.in_channels,
                 dtype=dtype,
                 device=device,
+                local_files_only=local_files_only,
+                cache_dir=cache_dir,
             )
 
             if traced_unet is not None:
@@ -128,6 +132,8 @@ class RiffusionPipeline(DiffusionPipeline):
         in_channels: int,
         dtype: torch.dtype,
         device: str = "cuda",
+        local_files_only=False,
+        cache_dir: T.Optional[str] = None,
     ) -> T.Optional[torch.nn.Module]:
         """
         Load a traced unet from the huggingface hub. This can improve performance.
@@ -141,6 +147,8 @@ class RiffusionPipeline(DiffusionPipeline):
             checkpoint,
             subfolder=subfolder,
             filename=filename,
+            local_files_only=local_files_only,
+            cache_dir=cache_dir,
         )
         unet_traced = torch.jit.load(unet_file)
 
