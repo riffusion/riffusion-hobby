@@ -78,7 +78,7 @@ def image_to_audio(*, image: str, audio: str, device: str = "cuda"):
 
     try:
         params = SpectrogramParams.from_exif(exif=img_exif)
-    except KeyError:
+    except (KeyError, AttributeError):
         print("WARNING: Could not find spectrogram parameters in exif data. Using defaults.")
         params = SpectrogramParams()
 
