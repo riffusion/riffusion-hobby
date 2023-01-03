@@ -57,7 +57,6 @@ def load_stable_diffusion_pipeline(
     ).to(device)
 
 
-
 @st.experimental_singleton
 def load_stable_diffusion_img2img_pipeline(
     checkpoint: str = "riffusion/riffusion-model-v1",
@@ -121,6 +120,26 @@ def spectrogram_image_converter(
     return SpectrogramImageConverter(params=params, device=device)
 
 
+@st.cache
+def spectrogram_image_from_audio(
+    segment: pydub.AudioSegment,
+    params: SpectrogramParams,
+    device: str = "cuda",
+) -> Image.Image:
+    converter = spectrogram_image_converter(params=params, device=device)
+    return converter.spectrogram_image_from_audio(segment)
+
+
+@st.experimental_memo
+def audio_segment_from_spectrogram_image(
+    image: Image.Image,
+    params: SpectrogramParams,
+    device: str = "cuda",
+) -> pydub.AudioSegment:
+    converter = spectrogram_image_converter(params=params, device=device)
+    return converter.audio_from_spectrogram_image(image)
+
+
 @st.experimental_memo
 def audio_bytes_from_spectrogram_image(
     image: Image.Image,
@@ -128,12 +147,10 @@ def audio_bytes_from_spectrogram_image(
     device: str = "cuda",
     output_format: str = "mp3",
 ) -> io.BytesIO:
-    converter = spectrogram_image_converter(params=params, device=device)
-    segment = converter.audio_from_spectrogram_image(image)
+    segment = audio_segment_from_spectrogram_image(image=image, params=params, device=device)
 
     audio_bytes = io.BytesIO()
     segment.export(audio_bytes, format=output_format)
-    audio_bytes.seek(0)
 
     return audio_bytes
 
@@ -165,3 +182,41 @@ def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
 @st.experimental_singleton
 def get_audio_splitter(device: str = "cuda"):
     return AudioSplitter(device=device)
+
+
+@st.cache
+def run_img2img(
+    prompt: str,
+    init_image: Image.Image,
+    denoising_strength: float,
+    num_inference_steps: int,
+    guidance_scale: float,
+    negative_prompt: str,
+    seed: int,
+    device: str = "cuda",
+    progress_callback: T.Optional[T.Callable[[float], T.Any]] = None,
+) -> Image.Image:
+    pipeline = load_stable_diffusion_img2img_pipeline(device=device)
+
+    generator = torch.Generator(device="cpu").manual_seed(seed)
+
+    num_expected_steps = max(int(num_inference_steps * denoising_strength), 1)
+
+    def callback(step: int, tensor: torch.Tensor, foo: T.Any) -> None:
+        if progress_callback is not None:
+            progress_callback(step / num_expected_steps)
+
+    result = pipeline(
+        prompt=prompt,
+        image=init_image,
+        strength=denoising_strength,
+        num_inference_steps=num_inference_steps,
+        guidance_scale=guidance_scale,
+        negative_prompt=negative_prompt or None,
+        num_images_per_prompt=1,
+        generator=generator,
+        callback=callback,
+        callback_steps=1,
+    )
+
+    return result.images[0]
