@@ -7,7 +7,7 @@ import typing as T
 import pydub
 import streamlit as st
 import torch
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionPipeline
 from PIL import Image
 
 from riffusion.audio_splitter import AudioSplitter
@@ -50,6 +50,30 @@ def load_stable_diffusion_pipeline(
         dtype = torch.float32
 
     return StableDiffusionPipeline.from_pretrained(
+        checkpoint,
+        revision="main",
+        torch_dtype=dtype,
+        safety_checker=lambda images, **kwargs: (images, False),
+    ).to(device)
+
+
+
+@st.experimental_singleton
+def load_stable_diffusion_img2img_pipeline(
+    checkpoint: str = "riffusion/riffusion-model-v1",
+    device: str = "cuda",
+    dtype: torch.dtype = torch.float16,
+) -> StableDiffusionImg2ImgPipeline:
+    """
+    Load the image to image pipeline.
+
+    TODO(hayk): Merge this into RiffusionPipeline to just load one model.
+    """
+    if device == "cpu" or device.lower().startswith("mps"):
+        print(f"WARNING: Falling back to float32 on {device}, float16 is unsupported")
+        dtype = torch.float32
+
+    return StableDiffusionImg2ImgPipeline.from_pretrained(
         checkpoint,
         revision="main",
         torch_dtype=dtype,
