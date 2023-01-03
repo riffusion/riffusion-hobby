@@ -29,6 +29,9 @@ def render_main():
         create_link(":musical_keyboard: Image to Audio", "/image_to_audio")
         st.write("Reconstruct audio from spectrogram images.")
 
+        create_link(":wave: Audio to Audio", "/audio_to_audio")
+        st.write("Modify audio with a text prompt")
+
 
 def create_link(name: str, url: str) -> None:
     st.markdown(
