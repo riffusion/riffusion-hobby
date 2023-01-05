@@ -3,6 +3,7 @@ import streamlit as st
 
 def render_main():
     st.set_page_config(layout="wide", page_icon="🎸")
+
     st.header(":guitar: Riffusion Playground")
     st.write("Interactive app for common riffusion tasks.")
 
@@ -18,8 +19,11 @@ def render_main():
         create_link(":scroll: Text to Audio Batch", "/text_to_audio_batch")
         st.write("Generate audio in batch from a JSON file of text prompts.")
 
+        create_link(":scissors: Audio Splitter", "/split_audio")
+        st.write("Split an audio into stems of {vocals, drums, bass, other}.")
+
     with right:
-        create_link(":scissors: Sample Clips", "/sample_clips")
+        create_link(":paperclip: Sample Clips", "/sample_clips")
         st.write("Export short clips from an audio file.")
 
         create_link(":musical_keyboard: Image to Audio", "/image_to_audio")

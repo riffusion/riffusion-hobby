@@ -4,11 +4,13 @@ Streamlit utilities (mostly cached wrappers around riffusion code).
 import io
 import typing as T
 
+import pydub
 import streamlit as st
 import torch
 from diffusers import StableDiffusionPipeline
 from PIL import Image
 
+from riffusion.audio_splitter import AudioSplitter
 from riffusion.riffusion_pipeline import RiffusionPipeline
 from riffusion.spectrogram_image_converter import SpectrogramImageConverter
 from riffusion.spectrogram_params import SpectrogramParams
@@ -129,3 +131,13 @@ def select_device(container: T.Any = st.sidebar) -> str:
     assert device is not None
 
     return device
+
+
+@st.experimental_memo
+def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
+    return pydub.AudioSegment.from_file(audio_file)
+
+
+@st.experimental_singleton
+def get_audio_splitter(device: str = "cuda"):
+    return AudioSplitter(device=device)

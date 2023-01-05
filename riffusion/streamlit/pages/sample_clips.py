@@ -10,7 +10,7 @@ import streamlit as st
 def render_sample_clips() -> None:
     st.set_page_config(layout="wide", page_icon="🎸")
 
-    st.subheader(":scissors: Sample Clips")
+    st.subheader(":paperclip: Sample Clips")
     st.write(
         """
     Export short clips from an audio file.
