@@ -14,6 +14,9 @@ def audio_from_waveform(
 ) -> pydub.AudioSegment:
     """
     Convert a numpy array of samples of a waveform to an audio segment.
+
+    Args:
+        samples: (channels, samples) array
     """
     # Normalize volume to fit in int16
     if normalize:
