@@ -198,7 +198,8 @@ def run_img2img(
 ) -> Image.Image:
     pipeline = load_stable_diffusion_img2img_pipeline(device=device)
 
-    generator = torch.Generator(device="cpu").manual_seed(seed)
+    generator_device = "cpu" if device.lower().startswith("mps") else device
+    generator = torch.Generator(device=generator_device).manual_seed(seed)
 
     num_expected_steps = max(int(num_inference_steps * denoising_strength), 1)
 

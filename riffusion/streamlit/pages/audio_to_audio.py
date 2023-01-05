@@ -78,7 +78,6 @@ def render_audio_to_audio() -> None:
         f"Slicing {len(clip_start_times)} clips of duration {clip_duration_s}s "
         f"with overlap {overlap_duration_s}s."
     )
-    st.write(clip_start_times)
 
     with st.form("Conversion Params"):
 
@@ -128,12 +127,9 @@ def render_audio_to_audio() -> None:
         clip_duration_ms = int(clip_duration_s * 1000)
         clip_segment = segment[clip_start_time_ms : clip_start_time_ms + clip_duration_ms]
 
+        # TODO(hayk): I don't think this is working properly
         if i == len(clip_start_times) - 1:
             silence_ms = clip_duration_ms - int(clip_segment.duration_seconds * 1000)
-            st.write(f"Last clip: {clip_duration_ms=}ms")
-            st.write(f"Last clip: {clip_start_time_ms=}ms")
-            st.write(f"Last clip: {clip_segment.duration_seconds=:.2f}s")
-            st.write(f"Last clip: {silence_ms=}ms")
             if silence_ms > 0:
                 clip_segment = clip_segment.append(pydub.AudioSegment.silent(duration=silence_ms))
 
@@ -194,8 +190,7 @@ def render_audio_to_audio() -> None:
             progress_callback=progress_callback,
             device=device,
         )
-        st.write(init_image.size)
-        st.write(image.size)
+
         result_images.append(image)
 
         if show_clip_details:
@@ -208,8 +203,7 @@ def render_audio_to_audio() -> None:
             device=device,
         )
         result_segments.append(riffed_segment)
-        st.write(clip_segment.duration_seconds)
-        st.write(riffed_segment.duration_seconds)
+
         audio_bytes = io.BytesIO()
         riffed_segment.export(audio_bytes, format="wav")
 
@@ -218,9 +212,7 @@ def render_audio_to_audio() -> None:
 
         if show_clip_details and show_difference:
             diff_np = np.maximum(0, np.asarray(init_image).astype(np.float32) - np.asarray(image).astype(np.float32))
-            st.write(diff_np.shape)
             diff_image = Image.fromarray(255 - diff_np.astype(np.uint8))
-            st.image(diff_image)
             diff_segment = streamlit_util.audio_segment_from_spectrogram_image(
                 image=diff_image,
                 params=params,
