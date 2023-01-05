@@ -13,7 +13,7 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_interpolation_demo() -> None:
+def render_interpolation() -> None:
     st.set_page_config(layout="wide", page_icon="🎸")
 
     st.subheader(":performing_arts: Interpolation")
@@ -216,4 +216,4 @@ def run_interpolation(
 
 
 if __name__ == "__main__":
-    render_interpolation_demo()
+    render_interpolation()
