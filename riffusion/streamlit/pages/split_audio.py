@@ -16,13 +16,14 @@ def render_split_audio() -> None:
     )
 
     device = streamlit_util.select_device(st.sidebar)
-    splitter = streamlit_util.get_audio_splitter(device=device)
 
     audio_file = st.file_uploader(
         "Upload audio",
         type=["mp3", "m4a", "ogg", "wav", "flac"],
         label_visibility="collapsed",
     )
+
+    splitter = streamlit_util.get_audio_splitter(device=device)
 
     if not audio_file:
         st.info("Upload audio to get started")
