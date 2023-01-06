@@ -79,6 +79,13 @@ def render_audio_to_audio() -> None:
         f"with overlap {overlap_duration_s}s."
     )
 
+    with st.expander("Clip Times"):
+        st.dataframe({
+            "Start Time [s]": clip_start_times,
+            "End Time [s]": clip_start_times + clip_duration_s,
+            "Duration [s]": clip_duration_s,
+        })
+
     with st.form("Conversion Params"):
 
         prompt = st.text_input("Text Prompt")
@@ -162,7 +169,7 @@ def render_audio_to_audio() -> None:
         # TODO(hayk): Scale something when computing audio
         closest_width = int(np.ceil(init_image.width / 32) * 32)
         closest_height = int(np.ceil(init_image.height / 32) * 32)
-        init_image = init_image.resize((closest_width, closest_height), Image.BICUBIC)
+        init_image_resized = init_image.resize((closest_width, closest_height), Image.BICUBIC)
 
         progress_callback = None
         if show_clip_details:
@@ -181,7 +188,7 @@ def render_audio_to_audio() -> None:
 
         image = streamlit_util.run_img2img(
             prompt=prompt,
-            init_image=init_image,
+            init_image=init_image_resized,
             denoising_strength=denoising_strength,
             num_inference_steps=num_inference_steps,
             guidance_scale=guidance_scale,
@@ -190,6 +197,9 @@ def render_audio_to_audio() -> None:
             progress_callback=progress_callback,
             device=device,
         )
+
+        # Resize back to original size
+        image = image.resize(init_image.size, Image.BICUBIC)
 
         result_images.append(image)
 
