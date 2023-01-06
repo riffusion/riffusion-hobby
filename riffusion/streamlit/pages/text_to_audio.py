@@ -12,10 +12,19 @@ def render_text_to_audio() -> None:
     st.subheader(":pencil2: Text to Audio")
     st.write(
         """
-    Generate audio from text prompts.  \nRuns the model directly without a seed image or
-    interpolation.
+    Generate audio from text prompts.
     """
     )
+
+    with st.expander("Help", False):
+        st.write(
+            """
+            This tool runs riffusion in the simplest text to image form to generate an audio
+            clip from a text prompt. There is no seed image or interpolation here. This mode
+            allows more diversity and creativity than when using a seed image, but it also
+            leads to having less control. Play with the seed to get infinite variations.
+            """
+        )
 
     device = streamlit_util.select_device(st.sidebar)
 
