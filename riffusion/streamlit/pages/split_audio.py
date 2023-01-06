@@ -15,6 +15,19 @@ def render_split_audio() -> None:
     """
     )
 
+    with st.expander("Help", False):
+        st.write(
+            """
+            This tool allows uploading an audio file of arbitrary length and splits it into
+            stems of vocals, drums, bass, and other. It does this using a deep network that
+            sweeps over the audio in clips, extracts the stems, and then cross fades the clips
+            back together to construct the full length stems. It's particularly useful in
+            combination with audio_to_audio, for example to split and preserve vocals while
+            modifying the rest of the track with a prompt. Or, to pull out drums to add later
+            in a DAW.
+            """
+        )
+
     device = streamlit_util.select_device(st.sidebar)
 
     audio_file = st.file_uploader(

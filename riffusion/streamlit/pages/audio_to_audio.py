@@ -20,6 +20,21 @@ def render_audio_to_audio() -> None:
     """
     )
 
+    with st.expander("Help", False):
+        st.write(
+            """
+            This tool allows you to upload an audio file of arbitrary length and modify it with
+            a text prompt. It does this by sweeping over the audio in overlapping clips, doing
+            img2img style transfer with riffusion, then stitching the clips back together with
+            cross fading to eliminate seams.
+
+            Try a denoising strength of 0.4 for light modification and 0.55 for more heavy
+            modification. The best specific denoising depends on how different the prompt is
+            from the source audio. You can play with the seed to get infinite variations.
+            Currently the same seed is used for all clips along the track.
+            """
+        )
+
     device = streamlit_util.select_device(st.sidebar)
 
     audio_file = st.file_uploader(

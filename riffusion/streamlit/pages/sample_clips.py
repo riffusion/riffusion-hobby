@@ -17,6 +17,15 @@ def render_sample_clips() -> None:
     """
     )
 
+    with st.expander("Help", False):
+        st.write(
+            """
+            This tool simply allows uploading an audio file and randomly sampling short clips
+            from it. It's useful for generating a large number of short clips from a single
+            audio file. Outputs can be saved to a given directory with a given audio extension.
+            """
+        )
+
     audio_file = st.file_uploader(
         "Upload a file",
         type=["wav", "mp3", "ogg"],

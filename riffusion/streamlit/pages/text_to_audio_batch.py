@@ -38,11 +38,20 @@ def render_text_to_audio_batch() -> None:
     st.subheader(":scroll: Text to Audio Batch")
     st.write(
         """
-    Generate audio in batch from a JSON file of text prompts.  \nThe input
-    file contains a global params block and a list of entries with positive and negative
-    prompts.
+    Generate audio in batch from a JSON file of text prompts.
     """
     )
+
+    with st.expander("Help", False):
+        st.write(
+            """
+            This tool is a batch form of text_to_audio, where the inputs are read in from a JSON
+            file. The input file contains a global params block and a list of entries with positive
+            and negative prompts. It's useful for automating a larger set of generations. See the
+            example inputs below for the format of the file.
+            """
+        )
+
     device = streamlit_util.select_device(st.sidebar)
 
     # Upload a JSON file

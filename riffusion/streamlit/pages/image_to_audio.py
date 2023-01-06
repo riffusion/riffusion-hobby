@@ -18,6 +18,16 @@ def render_image_to_audio() -> None:
     """
     )
 
+    with st.expander("Help", False):
+        st.write(
+            """
+            This tool takes an existing spectrogram image and reconstructs it into an audio
+            waveform. It also displays the EXIF metadata stored inside the image, which can
+            contain the parameters used to create the spectrogram image. If no EXIF is contained,
+            assumes default parameters.
+            """
+        )
+
     device = streamlit_util.select_device(st.sidebar)
 
     image_file = st.file_uploader(
