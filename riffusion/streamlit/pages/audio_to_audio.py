@@ -80,11 +80,13 @@ def render_audio_to_audio() -> None:
     )
 
     with st.expander("Clip Times"):
-        st.dataframe({
-            "Start Time [s]": clip_start_times,
-            "End Time [s]": clip_start_times + clip_duration_s,
-            "Duration [s]": clip_duration_s,
-        })
+        st.dataframe(
+            {
+                "Start Time [s]": clip_start_times,
+                "End Time [s]": clip_start_times + clip_duration_s,
+                "Duration [s]": clip_duration_s,
+            }
+        )
 
     with st.form("Conversion Params"):
 
@@ -221,7 +223,9 @@ def render_audio_to_audio() -> None:
             right.audio(audio_bytes)
 
         if show_clip_details and show_difference:
-            diff_np = np.maximum(0, np.asarray(init_image).astype(np.float32) - np.asarray(image).astype(np.float32))
+            diff_np = np.maximum(
+                0, np.asarray(init_image).astype(np.float32) - np.asarray(image).astype(np.float32)
+            )
             diff_image = Image.fromarray(255 - diff_np.astype(np.uint8))
             diff_segment = streamlit_util.audio_segment_from_spectrogram_image(
                 image=diff_image,
