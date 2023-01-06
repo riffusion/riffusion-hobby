@@ -167,8 +167,10 @@ def select_device(container: T.Any = st.sidebar) -> str:
 
     device_options = ["cuda", "cpu", "mps"]
     device = st.sidebar.selectbox(
-        "Device", options=device_options, index=device_options.index(default_device),
-        help="Which compute device to use. CUDA is recommended."
+        "Device",
+        options=device_options,
+        index=device_options.index(default_device),
+        help="Which compute device to use. CUDA is recommended.",
     )
     assert device is not None
 
