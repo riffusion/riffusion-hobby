@@ -11,7 +11,7 @@ This package contains integrations of Riffusion into third party apps and deploy
 To run riffusion as a Cog model, first, [install Cog](https://github.com/replicate/cog) and
 download the model weights:
 
-    cog run python -m riffusion.cog_riffusion --download_weights
+    cog run python -m integrations.cog_riffusion --download_weights
 
 Then you can run predictions:
 
