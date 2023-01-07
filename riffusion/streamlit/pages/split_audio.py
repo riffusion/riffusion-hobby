@@ -2,6 +2,7 @@ import io
 
 import streamlit as st
 
+from riffusion.audio_splitter import split_audio
 from riffusion.streamlit import util as streamlit_util
 
 
@@ -32,11 +33,13 @@ def render_split_audio() -> None:
 
     audio_file = st.file_uploader(
         "Upload audio",
-        type=["mp3", "m4a", "ogg", "wav", "flac"],
+        type=["mp3", "m4a", "ogg", "wav", "flac", "webm"],
         label_visibility="collapsed",
     )
 
-    splitter = streamlit_util.get_audio_splitter(device=device)
+    recombine = st.sidebar.checkbox(
+        "Recombine", value=False, help="Show recombined audio at the end for comparison"
+    )
 
     if not audio_file:
         st.info("Upload audio to get started")
@@ -51,13 +54,25 @@ def render_split_audio() -> None:
     segment = streamlit_util.load_audio_file(audio_file)
 
     # Split
-    stems = splitter.split(segment)
+    stems = split_audio(segment, device=device)
 
     # Display each
     for name, stem in stems.items():
         st.write(f"#### {name}")
         audio_bytes = io.BytesIO()
         stem.export(audio_bytes, format="mp3")
+        st.audio(audio_bytes)
+
+    if recombine:
+        stems_list = list(stems.values())
+        recombined = stems_list[0]
+        for stem in stems_list[1:]:
+            recombined = recombined.overlay(stem)
+
+        # Display
+        st.write("#### recombined")
+        audio_bytes = io.BytesIO()
+        recombined.export(audio_bytes, format="mp3")
         st.audio(audio_bytes)
 
 

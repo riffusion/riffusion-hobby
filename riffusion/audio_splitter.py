@@ -1,4 +1,8 @@
+import shutil
+import subprocess
+import tempfile
 import typing as T
+from pathlib import Path
 
 import numpy as np
 import pydub
@@ -9,9 +13,64 @@ from torchaudio.transforms import Fade
 from riffusion.util import audio_util
 
 
+def split_audio(
+    segment: pydub.AudioSegment,
+    model_name: str = "htdemucs_6s",
+    extension: str = "wav",
+    jobs: int = 4,
+    device: str = "cuda",
+) -> T.Dict[str, pydub.AudioSegment]:
+    """
+    Split audio into stems using demucs.
+    """
+    tmp_dir = Path(tempfile.mkdtemp(prefix="split_audio_"))
+
+    # Save the audio to a temporary file
+    audio_path = tmp_dir / "audio.mp3"
+    segment.export(audio_path, format="mp3")
+
+    # Assemble command
+    command = [
+        "demucs",
+        str(audio_path),
+        "--name",
+        model_name,
+        "--out",
+        str(tmp_dir),
+        "--jobs",
+        str(jobs),
+        "--device",
+        device if device != "mps" else "cpu",
+    ]
+    print(" ".join(command))
+
+    if extension == "mp3":
+        command.append("--mp3")
+
+    # Run demucs
+    subprocess.run(
+        command,
+        check=True,
+    )
+
+    # Load the stems
+    stems = {}
+    for stem_path in tmp_dir.glob(f"{model_name}/audio/*.{extension}"):
+        stem = pydub.AudioSegment.from_file(stem_path)
+        stems[stem_path.stem] = stem
+
+    # Delete tmp dir
+    shutil.rmtree(tmp_dir)
+
+    return stems
+
+
 class AudioSplitter:
     """
     Split audio into instrument stems like {drums, bass, vocals, etc.}
+
+    NOTE(hayk): This is deprecated as it has inferior performance to the newer hybrid transformer
+    model in the demucs repo. See the function above. Probably just delete this.
 
     See:
         https://pytorch.org/audio/main/tutorials/hybrid_demucs_tutorial.html
