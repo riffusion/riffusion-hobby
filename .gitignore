@@ -9,6 +9,9 @@ __pycache__/
 # VSCode
 .vscode
 
+# Jetbrains IDEA
+.idea/
+
 # Cog
 .cog/
 
