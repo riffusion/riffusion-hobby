@@ -39,7 +39,7 @@ def render_audio_to_audio() -> None:
 
     audio_file = st.file_uploader(
         "Upload audio",
-        type=["mp3", "m4a", "ogg", "wav", "flac"],
+        type=["mp3", "m4a", "ogg", "wav", "flac", "webm"],
         label_visibility="collapsed",
     )
 
