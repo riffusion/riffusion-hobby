@@ -1,5 +1,6 @@
 import io
 
+import pydub
 import streamlit as st
 
 from riffusion.audio_splitter import split_audio
@@ -37,8 +38,12 @@ def render_split_audio() -> None:
         label_visibility="collapsed",
     )
 
-    recombine = st.sidebar.checkbox(
-        "Recombine", value=False, help="Show recombined audio at the end for comparison"
+    stem_options = ["vocals", "drums", "bass", "guitar", "piano", "other"]
+    recombine = st.sidebar.multiselect(
+        "Recombine",
+        options=stem_options,
+        default=[],
+        help="Recombine these stems at the end",
     )
 
     if not audio_file:
@@ -46,7 +51,8 @@ def render_split_audio() -> None:
         return
 
     st.write("#### original")
-    st.audio(audio_file)
+    # TODO(hayk): This might be bogus, it can be other formats..
+    st.audio(audio_file, format="audio/mp3")
 
     if not st.button("Split", type="primary"):
         return
@@ -61,19 +67,22 @@ def render_split_audio() -> None:
         st.write(f"#### {name}")
         audio_bytes = io.BytesIO()
         stem.export(audio_bytes, format="mp3")
-        st.audio(audio_bytes)
+        st.audio(audio_bytes, format="audio/mp3")
 
     if recombine:
-        stems_list = list(stems.values())
-        recombined = stems_list[0]
-        for stem in stems_list[1:]:
-            recombined = recombined.overlay(stem)
+        recombined: pydub.AudioSegment = None
+        for name, stem in stems.items():
+            if name in recombine:
+                if recombined is None:
+                    recombined = stem
+                else:
+                    recombined = recombined.overlay(stem)
 
         # Display
         st.write("#### recombined")
         audio_bytes = io.BytesIO()
         recombined.export(audio_bytes, format="mp3")
-        st.audio(audio_bytes)
+        st.audio(audio_bytes, format="audio/mp3")
 
 
 if __name__ == "__main__":
