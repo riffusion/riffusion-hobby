@@ -46,18 +46,27 @@ def render_audio_to_audio() -> None:
     device = streamlit_util.select_device(st.sidebar)
     extension = streamlit_util.select_audio_extension(st.sidebar)
 
-    num_inference_steps = T.cast(
-        int,
-        st.sidebar.number_input(
-            "Steps per sample", value=50, help="Number of denoising steps per model run"
-        ),
-    )
+    with st.sidebar:
+        num_inference_steps = T.cast(
+            int,
+            st.number_input(
+                "Steps per sample", value=50, help="Number of denoising steps per model run"
+            ),
+        )
 
-    guidance = st.sidebar.number_input(
-        "Guidance",
-        value=7.0,
-        help="How much the model listens to the text prompt",
-    )
+        guidance = st.number_input(
+            "Guidance",
+            value=7.0,
+            help="How much the model listens to the text prompt",
+        )
+
+        scheduler = st.selectbox(
+            "Scheduler",
+            options=streamlit_util.SCHEDULER_OPTIONS,
+            index=0,
+            help="Which diffusion scheduler to use",
+        )
+        assert scheduler is not None
 
     audio_file = st.file_uploader(
         "Upload audio",
@@ -207,6 +216,7 @@ def render_audio_to_audio() -> None:
                 seed=prompt_input_a.seed,
                 progress_callback=progress_callback,
                 device=device,
+                scheduler=scheduler,
             )
 
         # Resize back to original size

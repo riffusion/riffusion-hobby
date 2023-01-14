@@ -20,6 +20,15 @@ from riffusion.spectrogram_params import SpectrogramParams
 AUDIO_EXTENSIONS = ["mp3", "wav", "flac", "webm", "m4a", "ogg"]
 IMAGE_EXTENSIONS = ["png", "jpg", "jpeg"]
 
+SCHEDULER_OPTIONS = [
+    "PNDMScheduler",
+    "DDIMScheduler",
+    "LMSDiscreteScheduler",
+    "EulerDiscreteScheduler",
+    "EulerAncestralDiscreteScheduler",
+    "DPMSolverMultistepScheduler",
+]
+
 
 @st.experimental_singleton
 def load_riffusion_checkpoint(
@@ -42,6 +51,7 @@ def load_stable_diffusion_pipeline(
     checkpoint: str = "riffusion/riffusion-model-v1",
     device: str = "cuda",
     dtype: torch.dtype = torch.float16,
+    scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> StableDiffusionPipeline:
     """
     Load the riffusion pipeline.
@@ -52,12 +62,48 @@ def load_stable_diffusion_pipeline(
         print(f"WARNING: Falling back to float32 on {device}, float16 is unsupported")
         dtype = torch.float32
 
-    return StableDiffusionPipeline.from_pretrained(
+    pipeline = StableDiffusionPipeline.from_pretrained(
         checkpoint,
         revision="main",
         torch_dtype=dtype,
         safety_checker=lambda images, **kwargs: (images, False),
     ).to(device)
+
+    pipeline.scheduler = get_scheduler(scheduler, config=pipeline.scheduler.config)
+
+    return pipeline
+
+
+def get_scheduler(scheduler: str, config: T.Any) -> T.Any:
+    """
+    Construct a denoising scheduler from a string.
+    """
+    if scheduler == "PNDMScheduler":
+        from diffusers import PNDMScheduler
+
+        return PNDMScheduler.from_config(config)
+    elif scheduler == "DPMSolverMultistepScheduler":
+        from diffusers import DPMSolverMultistepScheduler
+
+        return DPMSolverMultistepScheduler.from_config(config)
+    elif scheduler == "DDIMScheduler":
+        from diffusers import DDIMScheduler
+
+        return DDIMScheduler.from_config(config)
+    elif scheduler == "LMSDiscreteScheduler":
+        from diffusers import LMSDiscreteScheduler
+
+        return LMSDiscreteScheduler.from_config(config)
+    elif scheduler == "EulerDiscreteScheduler":
+        from diffusers import EulerDiscreteScheduler
+
+        return EulerDiscreteScheduler.from_config(config)
+    elif scheduler == "EulerAncestralDiscreteScheduler":
+        from diffusers import EulerAncestralDiscreteScheduler
+
+        return EulerAncestralDiscreteScheduler.from_config(config)
+    else:
+        raise ValueError(f"Unknown scheduler {scheduler}")
 
 
 @st.experimental_singleton
@@ -65,6 +111,7 @@ def load_stable_diffusion_img2img_pipeline(
     checkpoint: str = "riffusion/riffusion-model-v1",
     device: str = "cuda",
     dtype: torch.dtype = torch.float16,
+    scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> StableDiffusionImg2ImgPipeline:
     """
     Load the image to image pipeline.
@@ -75,12 +122,16 @@ def load_stable_diffusion_img2img_pipeline(
         print(f"WARNING: Falling back to float32 on {device}, float16 is unsupported")
         dtype = torch.float32
 
-    return StableDiffusionImg2ImgPipeline.from_pretrained(
+    pipeline = StableDiffusionImg2ImgPipeline.from_pretrained(
         checkpoint,
         revision="main",
         torch_dtype=dtype,
         safety_checker=lambda images, **kwargs: (images, False),
     ).to(device)
+
+    pipeline.scheduler = get_scheduler(scheduler, config=pipeline.scheduler.config)
+
+    return pipeline
 
 
 @st.experimental_memo
@@ -93,11 +144,12 @@ def run_txt2img(
     width: int,
     height: int,
     device: str = "cuda",
+    scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> Image.Image:
     """
     Run the text to image pipeline with caching.
     """
-    pipeline = load_stable_diffusion_pipeline(device=device)
+    pipeline = load_stable_diffusion_pipeline(device=device, scheduler=scheduler)
 
     generator_device = "cpu" if device.lower().startswith("mps") else device
     generator = torch.Generator(device=generator_device).manual_seed(seed)
@@ -214,9 +266,10 @@ def run_img2img(
     seed: int,
     negative_prompt: T.Optional[str] = None,
     device: str = "cuda",
+    scheduler: str = SCHEDULER_OPTIONS[0],
     progress_callback: T.Optional[T.Callable[[float], T.Any]] = None,
 ) -> Image.Image:
-    pipeline = load_stable_diffusion_img2img_pipeline(device=device)
+    pipeline = load_stable_diffusion_img2img_pipeline(device=device, scheduler=scheduler)
 
     generator_device = "cpu" if device.lower().startswith("mps") else device
     generator = torch.Generator(device=generator_device).manual_seed(seed)

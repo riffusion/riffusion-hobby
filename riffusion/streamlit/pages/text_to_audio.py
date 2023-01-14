@@ -61,6 +61,13 @@ def render_text_to_audio() -> None:
         guidance = st.number_input(
             "Guidance", value=7.0, help="How much the model listens to the text prompt"
         )
+        scheduler = st.selectbox(
+            "Scheduler",
+            options=streamlit_util.SCHEDULER_OPTIONS,
+            index=0,
+            help="Which diffusion scheduler to use",
+        )
+        assert scheduler is not None
 
     if not prompt:
         st.info("Enter a prompt")
@@ -85,6 +92,7 @@ def render_text_to_audio() -> None:
             width=width,
             height=512,
             device=device,
+            scheduler=scheduler,
         )
         st.image(image)
 
