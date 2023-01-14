@@ -61,6 +61,12 @@ def render_interpolation() -> None:
         ),
     )
 
+    guidance = st.sidebar.number_input(
+        "Guidance",
+        value=7.0,
+        help="How much the model listens to the text prompt",
+    )
+
     init_image_name = st.sidebar.selectbox(
         "Seed image",
         # TODO(hayk): Read from directory
@@ -96,11 +102,11 @@ def render_interpolation() -> None:
 
         with left:
             st.write("##### Prompt A")
-            prompt_input_a = get_prompt_inputs(key="a")
+            prompt_input_a = PromptInput(guidance=guidance, **get_prompt_inputs(key="a"))
 
         with right:
             st.write("##### Prompt B")
-            prompt_input_b = get_prompt_inputs(key="b")
+            prompt_input_b = PromptInput(guidance=guidance, **get_prompt_inputs(key="b"))
 
         st.form_submit_button("Generate", type="primary")
 
@@ -108,10 +114,14 @@ def render_interpolation() -> None:
         st.info("Enter both prompts to interpolate between them")
         return
 
-    # TODO(hayk): Make not linspace
     alphas = list(np.linspace(0, 1, num_interpolation_steps))
     alphas_str = ", ".join([f"{alpha:.2f}" for alpha in alphas])
     st.write(f"**Alphas** : [{alphas_str}]")
+
+    # TODO(hayk): Apply scaling to alphas like this
+    # T_shifted = T * 2 - 1
+    # T_sample = (np.abs(T_shifted)**t_scale_power * np.sign(T_shifted) + 1) / 2
+    # T_sample = T_sample * (t_end - t_start) + t_start
 
     if init_image_name == "custom":
         if not init_image_file:
@@ -171,36 +181,43 @@ def render_interpolation() -> None:
     st.audio(audio_bytes)
 
 
-def get_prompt_inputs(key: str) -> PromptInput:
+def get_prompt_inputs(
+    key: str,
+    include_negative_prompt: bool = False,
+    cols: bool = False,
+) -> T.Dict[str, T.Any]:
     """
     Compute prompt inputs from widgets.
     """
-    prompt = st.text_input("Prompt", label_visibility="collapsed", key=f"prompt_{key}")
-    seed = T.cast(
+    p: T.Dict[str, T.Any] = {}
+
+    # Optionally use columns
+    left, right = T.cast(T.Any, st.columns(2) if cols else (st, st))
+
+    visibility = "visible" if cols else "collapsed"
+    p["prompt"] = left.text_input("Prompt", label_visibility=visibility, key=f"prompt_{key}")
+
+    if include_negative_prompt:
+        p["negative_prompt"] = right.text_input("Negative Prompt", key=f"negative_prompt_{key}")
+
+    p["seed"] = T.cast(
         int,
-        st.number_input(
+        left.number_input(
             "Seed",
             value=42,
             key=f"seed_{key}",
             help="Integer used to generate a random result. Vary this to explore alternatives.",
         ),
     )
-    denoising = st.number_input(
-        "Denoising", value=0.75, key=f"denoising_{key}", help="How much to modify the seed image"
-    )
-    guidance = st.number_input(
-        "Guidance",
-        value=7.0,
-        key=f"guidance_{key}",
-        help="How much the model listens to the text prompt",
+
+    p["denoising"] = right.number_input(
+        "Denoising",
+        value=0.5,
+        key=f"denoising_{key}",
+        help="How much to modify the seed image",
     )
 
-    return PromptInput(
-        prompt=prompt,
-        seed=seed,
-        denoising=denoising,
-        guidance=guidance,
-    )
+    return p
 
 
 @st.experimental_memo

@@ -3,6 +3,7 @@ Audio utility functions.
 """
 
 import io
+import typing as T
 
 import numpy as np
 import pydub
@@ -69,3 +70,16 @@ def apply_filters(segment: pydub.AudioSegment, compression: bool = False) -> pyd
     )
 
     return segment
+
+
+def stitch_segments(
+    segments: T.Sequence[pydub.AudioSegment], crossfade_s: float
+) -> pydub.AudioSegment:
+    """
+    Stitch together a sequence of audio segments with a crossfade between each segment.
+    """
+    crossfade_ms = int(crossfade_s * 1000)
+    combined_segment = segments[0]
+    for segment in segments[1:]:
+        combined_segment = combined_segment.append(segment, crossfade=crossfade_ms)
+    return combined_segment

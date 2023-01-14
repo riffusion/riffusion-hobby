@@ -194,8 +194,8 @@ def run_img2img(
     denoising_strength: float,
     num_inference_steps: int,
     guidance_scale: float,
-    negative_prompt: str,
     seed: int,
+    negative_prompt: T.Optional[str] = None,
     device: str = "cuda",
     progress_callback: T.Optional[T.Callable[[float], T.Any]] = None,
 ) -> Image.Image:

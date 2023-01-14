@@ -19,6 +19,9 @@ class PromptInput:
     # Random seed for denoising
     seed: int
 
+    # Negative prompt to avoid (optional)
+    negative_prompt: T.Optional[str] = None
+
     # Denoising strength
     denoising: float = 0.75
 
