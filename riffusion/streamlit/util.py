@@ -17,6 +17,9 @@ from riffusion.spectrogram_params import SpectrogramParams
 
 # TODO(hayk): Add URL params
 
+AUDIO_EXTENSIONS = ["mp3", "wav", "flac", "webm", "m4a", "ogg"]
+IMAGE_EXTENSIONS = ["png", "jpg", "jpeg"]
+
 
 @st.experimental_singleton
 def load_riffusion_checkpoint(
@@ -177,6 +180,20 @@ def select_device(container: T.Any = st.sidebar) -> str:
     return device
 
 
+def select_audio_extension(container: T.Any = st.sidebar) -> str:
+    """
+    Dropdown to select an audio extension, with an intelligent default.
+    """
+    default = "mp3" if pydub.AudioSegment.ffmpeg else "wav"
+    extension = container.selectbox(
+        "Output format",
+        options=AUDIO_EXTENSIONS,
+        index=AUDIO_EXTENSIONS.index(default),
+    )
+    assert extension is not None
+    return extension
+
+
 @st.experimental_memo
 def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
     return pydub.AudioSegment.from_file(audio_file)
@@ -224,3 +241,43 @@ def run_img2img(
     )
 
     return result.images[0]
+
+
+class StreamlitCounter:
+    """
+    Simple counter stored in streamlit session state.
+    """
+
+    def __init__(self, key="_counter"):
+        self.key = key
+        if not st.session_state.get(self.key):
+            st.session_state[self.key] = 0
+
+    def increment(self):
+        st.session_state[self.key] += 1
+
+    @property
+    def value(self):
+        return st.session_state[self.key]
+
+
+def display_and_download_audio(
+    segment: pydub.AudioSegment,
+    name: str,
+    extension: str = "mp3",
+) -> None:
+    """
+    Display the given audio segment and provide a button to download it with
+    a proper file name, since st.audio doesn't support that.
+    """
+    mime_type = f"audio/{extension}"
+    audio_bytes = io.BytesIO()
+    segment.export(audio_bytes, format=extension)
+    st.audio(audio_bytes, format=mime_type)
+
+    st.download_button(
+        f"{name}.{extension}",
+        data=audio_bytes,
+        file_name=f"{name}.{extension}",
+        mime=mime_type,
+    )

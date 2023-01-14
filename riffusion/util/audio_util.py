@@ -83,3 +83,17 @@ def stitch_segments(
     for segment in segments[1:]:
         combined_segment = combined_segment.append(segment, crossfade=crossfade_ms)
     return combined_segment
+
+
+def overlay_segments(segments: T.Sequence[pydub.AudioSegment]) -> pydub.AudioSegment:
+    """
+    Overlay a sequence of audio segments on top of each other.
+    """
+    assert len(segments) > 0
+    output: pydub.AudioSegment = None
+    for segment in segments:
+        if output is None:
+            output = segment
+        else:
+            output = output.overlay(segment)
+    return output

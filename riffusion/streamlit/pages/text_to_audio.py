@@ -27,6 +27,7 @@ def render_text_to_audio() -> None:
         )
 
     device = streamlit_util.select_device(st.sidebar)
+    extension = streamlit_util.select_audio_extension(st.sidebar)
 
     with st.form("Inputs"):
         prompt = st.text_input("Prompt")
@@ -87,13 +88,15 @@ def render_text_to_audio() -> None:
         )
         st.image(image)
 
-        audio_bytes = streamlit_util.audio_bytes_from_spectrogram_image(
+        segment = streamlit_util.audio_segment_from_spectrogram_image(
             image=image,
             params=params,
             device=device,
-            output_format="mp3",
         )
-        st.audio(audio_bytes)
+
+        streamlit_util.display_and_download_audio(
+            segment, name=f"{prompt.replace(' ', '_')}_{seed}", extension=extension
+        )
 
         seed += 1
 
