@@ -1,4 +1,5 @@
 import dataclasses
+from pathlib import Path
 
 import streamlit as st
 from PIL import Image
@@ -29,10 +30,11 @@ def render_image_to_audio() -> None:
         )
 
     device = streamlit_util.select_device(st.sidebar)
+    extension = streamlit_util.select_audio_extension(st.sidebar)
 
     image_file = st.file_uploader(
         "Upload a file",
-        type=["png", "jpg", "jpeg"],
+        type=streamlit_util.IMAGE_EXTENSIONS,
         label_visibility="collapsed",
     )
     if not image_file:
@@ -55,13 +57,17 @@ def render_image_to_audio() -> None:
     with st.expander("Spectrogram Parameters", expanded=False):
         st.json(dataclasses.asdict(params))
 
-    audio_bytes = streamlit_util.audio_bytes_from_spectrogram_image(
+    segment = streamlit_util.audio_segment_from_spectrogram_image(
         image=image.copy(),
         params=params,
         device=device,
-        output_format="mp3",
     )
-    st.audio(audio_bytes)
+
+    streamlit_util.display_and_download_audio(
+        segment,
+        name=Path(image_file.name).stem,
+        extension=extension,
+    )
 
 
 if __name__ == "__main__":

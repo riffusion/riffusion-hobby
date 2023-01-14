@@ -42,6 +42,7 @@ def render_interpolation() -> None:
     # Sidebar params
 
     device = streamlit_util.select_device(st.sidebar)
+    extension = streamlit_util.select_audio_extension(st.sidebar)
 
     num_interpolation_steps = T.cast(
         int,
@@ -78,7 +79,7 @@ def render_interpolation() -> None:
     if init_image_name == "custom":
         init_image_file = st.sidebar.file_uploader(
             "Upload a custom seed image",
-            type=["png", "jpg", "jpeg"],
+            type=streamlit_util.IMAGE_EXTENSIONS,
             label_visibility="collapsed",
         )
         if init_image_file:
@@ -154,6 +155,7 @@ def render_interpolation() -> None:
             inputs=inputs,
             init_image=init_image,
             device=device,
+            extension=extension,
         )
 
         if show_individual_outputs:
@@ -167,18 +169,29 @@ def render_interpolation() -> None:
 
     st.write("#### Final Output")
 
-    # TODO(hayk): Concatenate with better blending
+    # TODO(hayk): Concatenate with overlap and better blending like in audio to audio
     audio_segments = [pydub.AudioSegment.from_file(audio_bytes) for audio_bytes in audio_bytes_list]
     concat_segment = audio_segments[0]
     for segment in audio_segments[1:]:
         concat_segment = concat_segment.append(segment, crossfade=0)
 
     audio_bytes = io.BytesIO()
-    concat_segment.export(audio_bytes, format="mp3")
+    concat_segment.export(audio_bytes, format=extension)
     audio_bytes.seek(0)
 
     st.write(f"Duration: {concat_segment.duration_seconds:.3f} seconds")
     st.audio(audio_bytes)
+
+    output_name = (
+        f"{prompt_input_a.prompt.replace(' ', '_')}_"
+        f"{prompt_input_b.prompt.replace(' ', '_')}.{extension}"
+    )
+    st.download_button(
+        output_name,
+        data=audio_bytes,
+        file_name=output_name,
+        mime=f"audio/{extension}",
+    )
 
 
 def get_prompt_inputs(
@@ -222,7 +235,7 @@ def get_prompt_inputs(
 
 @st.experimental_memo
 def run_interpolation(
-    inputs: InferenceInput, init_image: Image.Image, device: str = "cuda"
+    inputs: InferenceInput, init_image: Image.Image, device: str = "cuda", extension: str = "mp3"
 ) -> T.Tuple[Image.Image, io.BytesIO]:
     """
     Cached function for riffusion interpolation.
@@ -250,7 +263,7 @@ def run_interpolation(
         image=image,
         params=params,
         device=device,
-        output_format="mp3",
+        output_format=extension,
     )
 
     return image, audio_bytes

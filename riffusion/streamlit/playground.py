@@ -13,13 +13,13 @@ def render_main():
         st.write("Generate audio clips from text prompts.")
 
         create_link(":wave: Audio to Audio", "/audio_to_audio")
-        st.write("Upload audio and modify with text prompt.")
+        st.write("Upload audio and modify with text prompt (interpolation supported).")
 
         create_link(":performing_arts: Interpolation", "/interpolation")
         st.write("Interpolate between prompts in the latent space.")
 
         create_link(":scissors: Audio Splitter", "/split_audio")
-        st.write("Upload audio and split into vocals, bass, drums, and other.")
+        st.write("Split audio into stems like vocals, bass, drums, guitar, etc.")
 
     with right:
         create_link(":scroll: Text to Audio Batch", "/text_to_audio_batch")

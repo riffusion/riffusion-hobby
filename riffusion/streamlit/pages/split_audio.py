@@ -1,10 +1,12 @@
-import io
+import typing as T
+from pathlib import Path
 
 import pydub
 import streamlit as st
 
 from riffusion.audio_splitter import split_audio
 from riffusion.streamlit import util as streamlit_util
+from riffusion.util import audio_util
 
 
 def render_split_audio() -> None:
@@ -13,7 +15,7 @@ def render_split_audio() -> None:
     st.subheader(":scissors: Audio Splitter")
     st.write(
         """
-    Split an audio into stems of {vocals, drums, bass, piano, guitar, other}.
+    Split audio into individual instrument stems.
     """
     )
 
@@ -32,13 +34,21 @@ def render_split_audio() -> None:
 
     device = streamlit_util.select_device(st.sidebar)
 
+    extension_options = ["mp3", "wav", "m4a", "ogg", "flac", "webm"]
+    extension = st.sidebar.selectbox(
+        "Output format",
+        options=extension_options,
+        index=extension_options.index("mp3"),
+    )
+    assert extension is not None
+
     audio_file = st.file_uploader(
         "Upload audio",
-        type=["mp3", "m4a", "ogg", "wav", "flac", "webm"],
+        type=extension_options,
         label_visibility="collapsed",
     )
 
-    stem_options = ["vocals", "drums", "bass", "guitar", "piano", "other"]
+    stem_options = ["Vocals", "Drums", "Bass", "Guitar", "Piano", "Other"]
     recombine = st.sidebar.multiselect(
         "Recombine",
         options=stem_options,
@@ -50,39 +60,45 @@ def render_split_audio() -> None:
         st.info("Upload audio to get started")
         return
 
-    st.write("#### original")
-    # TODO(hayk): This might be bogus, it can be other formats..
-    st.audio(audio_file, format="audio/mp3")
+    st.write("#### Original")
+    st.audio(audio_file)
 
-    if not st.button("Split", type="primary"):
+    counter = streamlit_util.StreamlitCounter()
+    st.button("Split", type="primary", on_click=counter.increment)
+    if counter.value == 0:
         return
 
     segment = streamlit_util.load_audio_file(audio_file)
 
     # Split
-    stems = split_audio(segment, device=device)
+    stems = split_audio_cached(segment, device=device)
+
+    input_name = Path(audio_file.name).stem
 
     # Display each
-    for name, stem in stems.items():
-        st.write(f"#### {name}")
-        audio_bytes = io.BytesIO()
-        stem.export(audio_bytes, format="mp3")
-        st.audio(audio_bytes, format="audio/mp3")
+    for name in stem_options:
+        stem = stems[name.lower()]
+        st.write(f"#### Stem: {name}")
+
+        output_name = f"{input_name}_{name.lower()}"
+        streamlit_util.display_and_download_audio(stem, output_name, extension=extension)
 
     if recombine:
-        recombined: pydub.AudioSegment = None
-        for name, stem in stems.items():
-            if name in recombine:
-                if recombined is None:
-                    recombined = stem
-                else:
-                    recombined = recombined.overlay(stem)
+        recombine_lower = [r.lower() for r in recombine]
+        segments = [s for name, s in stems.items() if name in recombine_lower]
+        recombined = audio_util.overlay_segments(segments)
 
         # Display
-        st.write("#### recombined")
-        audio_bytes = io.BytesIO()
-        recombined.export(audio_bytes, format="mp3")
-        st.audio(audio_bytes, format="audio/mp3")
+        st.write(f"#### Recombined: {', '.join(recombine)}")
+        output_name = f"{input_name}_{'_'.join(recombine_lower)}"
+        streamlit_util.display_and_download_audio(recombined, output_name, extension=extension)
+
+
+@st.cache
+def split_audio_cached(
+    segment: pydub.AudioSegment, device: str = "cuda"
+) -> T.Dict[str, pydub.AudioSegment]:
+    return split_audio(segment, device=device)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import io
 import typing as T
+from pathlib import Path
 
 import numpy as np
 import pydub
@@ -19,7 +20,7 @@ def render_audio_to_audio() -> None:
     st.subheader(":wave: Audio to Audio")
     st.write(
         """
-    Modify existing audio from a text prompt.
+    Modify existing audio from a text prompt or interpolate between two.
     """
     )
 
@@ -35,10 +36,15 @@ def render_audio_to_audio() -> None:
             modification. The best specific denoising depends on how different the prompt is
             from the source audio. You can play with the seed to get infinite variations.
             Currently the same seed is used for all clips along the track.
+
+            If the Interpolation check box is enabled, supports entering two sets of prompt,
+            seed, and denoising value and smoothly blends between them along the selected
+            duration of the audio. This is a great way to create a transition.
             """
         )
 
     device = streamlit_util.select_device(st.sidebar)
+    extension = streamlit_util.select_audio_extension(st.sidebar)
 
     num_inference_steps = T.cast(
         int,
@@ -55,7 +61,7 @@ def render_audio_to_audio() -> None:
 
     audio_file = st.file_uploader(
         "Upload audio",
-        type=["mp3", "m4a", "ogg", "wav", "flac", "webm"],
+        type=streamlit_util.AUDIO_EXTENSIONS,
         label_visibility="collapsed",
     )
 
@@ -89,7 +95,14 @@ def render_audio_to_audio() -> None:
         overlap_duration_s=overlap_duration_s,
     )
 
-    interpolate = st.checkbox("Interpolate between two settings", False)
+    interpolate = st.checkbox(
+        "Interpolate between two endpoints",
+        value=False,
+        help="Interpolate between two prompts, seeds, or denoising values along the"
+        "duration of the segment",
+    )
+
+    counter = streamlit_util.StreamlitCounter()
 
     with st.form("audio to audio form"):
         if interpolate:
@@ -109,7 +122,7 @@ def render_audio_to_audio() -> None:
                 **get_prompt_inputs(key="a", include_negative_prompt=True, cols=True),
             )
 
-        submit_button = st.form_submit_button("Riff", type="primary")
+        st.form_submit_button("Riff", type="primary", on_click=counter.increment)
 
     show_clip_details = st.sidebar.checkbox("Show Clip Details", True)
     show_difference = st.sidebar.checkbox("Show Difference", False)
@@ -124,8 +137,10 @@ def render_audio_to_audio() -> None:
         st.info("Enter a prompt")
         return
 
-    if not submit_button:
+    if counter.value == 0:
         return
+
+    st.write(f"## Counter: {counter.value}")
 
     params = SpectrogramParams()
 
@@ -228,16 +243,17 @@ def render_audio_to_audio() -> None:
             )
 
             audio_bytes = io.BytesIO()
-            diff_segment.export(audio_bytes, format="wav")
+            diff_segment.export(audio_bytes, format=extension)
             st.audio(audio_bytes)
 
     # Combine clips with a crossfade based on overlap
     combined_segment = audio_util.stitch_segments(result_segments, crossfade_s=overlap_duration_s)
 
-    audio_bytes = io.BytesIO()
-    combined_segment.export(audio_bytes, format="mp3")
     st.write(f"#### Final Audio ({combined_segment.duration_seconds}s)")
-    st.audio(audio_bytes, format="audio/mp3")
+
+    input_name = Path(audio_file.name).stem
+    output_name = f"{input_name}_{prompt_input_a.prompt.replace(' ', '_')}"
+    streamlit_util.display_and_download_audio(combined_segment, output_name, extension=extension)
 
 
 def get_clip_params(advanced: bool = False) -> T.Dict[str, T.Any]:
