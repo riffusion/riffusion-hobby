@@ -13,7 +13,7 @@ def render_split_audio() -> None:
     st.subheader(":scissors: Audio Splitter")
     st.write(
         """
-    Split an audio into stems of {vocals, drums, bass, other}.
+    Split an audio into stems of {vocals, drums, bass, piano, guitar, other}.
     """
     )
 

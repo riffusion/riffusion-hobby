@@ -12,6 +12,9 @@ __pycache__/
 # Cog
 .cog/
 
+# Random stuff I don't care about
+.graveyard/
+
 # Distribution / packaging
 .Python
 build/
