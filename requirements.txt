@@ -9,6 +9,7 @@ numpy
 pillow>=9.1.0
 plotly
 pydub
+pysoundfile
 scipy
 soundfile
 sox
