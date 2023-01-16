@@ -4,6 +4,7 @@ Streamlit utilities (mostly cached wrappers around riffusion code).
 import io
 import threading
 import typing as T
+from pathlib import Path
 
 import pydub
 import streamlit as st
@@ -53,6 +54,8 @@ def load_stable_diffusion_pipeline(
     device: str = "cuda",
     dtype: torch.dtype = torch.float16,
     scheduler: str = SCHEDULER_OPTIONS[0],
+    lora_path: T.Optional[str] = None,
+    lora_scale: float = 1.0,
 ) -> StableDiffusionPipeline:
     """
     Load the riffusion pipeline.
@@ -71,6 +74,21 @@ def load_stable_diffusion_pipeline(
     ).to(device)
 
     pipeline.scheduler = get_scheduler(scheduler, config=pipeline.scheduler.config)
+
+    if lora_path:
+        if not Path(lora_path).is_file() or Path(lora_path).is_dir():
+            raise RuntimeError("Bad lora path")
+
+        from lora_diffusion import patch_pipe, tune_lora_scale
+
+        patch_pipe(
+            pipeline,
+            lora_path,
+            patch_text=True,
+            patch_ti=True,
+            patch_unet=True,
+        )
+        tune_lora_scale(pipeline.unet, lora_scale)
 
     return pipeline
 
@@ -121,6 +139,8 @@ def load_stable_diffusion_img2img_pipeline(
     device: str = "cuda",
     dtype: torch.dtype = torch.float16,
     scheduler: str = SCHEDULER_OPTIONS[0],
+    lora_path: T.Optional[str] = None,
+    lora_scale: float = 1.0,
 ) -> StableDiffusionImg2ImgPipeline:
     """
     Load the image to image pipeline.
@@ -140,6 +160,22 @@ def load_stable_diffusion_img2img_pipeline(
 
     pipeline.scheduler = get_scheduler(scheduler, config=pipeline.scheduler.config)
 
+    # TODO reduce duplication
+    if lora_path:
+        if not Path(lora_path).is_file() or Path(lora_path).is_dir():
+            raise RuntimeError("Bad lora path")
+
+        from lora_diffusion import patch_pipe, tune_lora_scale
+
+        patch_pipe(
+            pipeline,
+            lora_path,
+            patch_text=True,
+            patch_ti=True,
+            patch_unet=True,
+        )
+        tune_lora_scale(pipeline.unet, lora_scale)
+
     return pipeline
 
 
@@ -154,12 +190,19 @@ def run_txt2img(
     height: int,
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
+    lora_path: T.Optional[str] = None,
+    lora_scale: float = 1.0,
 ) -> Image.Image:
     """
     Run the text to image pipeline with caching.
     """
     with pipeline_lock():
-        pipeline = load_stable_diffusion_pipeline(device=device, scheduler=scheduler)
+        pipeline = load_stable_diffusion_pipeline(
+            device=device,
+            scheduler=scheduler,
+            lora_path=lora_path,
+            lora_scale=lora_scale,
+        )
 
         generator_device = "cpu" if device.lower().startswith("mps") else device
         generator = torch.Generator(device=generator_device).manual_seed(seed)
@@ -338,9 +381,16 @@ def run_img2img(
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
     progress_callback: T.Optional[T.Callable[[float], T.Any]] = None,
+    lora_path: T.Optional[str] = None,
+    lora_scale: float = 1.0,
 ) -> Image.Image:
     with pipeline_lock():
-        pipeline = load_stable_diffusion_img2img_pipeline(device=device, scheduler=scheduler)
+        pipeline = load_stable_diffusion_img2img_pipeline(
+            device=device,
+            scheduler=scheduler,
+            lora_path=lora_path,
+            lora_scale=lora_scale,
+        )
 
         generator_device = "cpu" if device.lower().startswith("mps") else device
         generator = torch.Generator(device=generator_device).manual_seed(seed)

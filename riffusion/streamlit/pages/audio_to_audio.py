@@ -47,6 +47,8 @@ def render_audio_to_audio() -> None:
     extension = streamlit_util.select_audio_extension(st.sidebar)
 
     use_magic_mix = st.sidebar.checkbox("Use Magic Mix", False)
+    lora_path = st.sidebar.text_input("Lora Path", "")
+    lora_scale = st.sidebar.number_input("Lora Scale", value=1.0)
 
     with st.sidebar:
         num_inference_steps = T.cast(
@@ -171,8 +173,6 @@ def render_audio_to_audio() -> None:
     if counter.value == 0:
         return
 
-    st.write(f"## Counter: {counter.value}")
-
     params = SpectrogramParams()
 
     if interpolate:
@@ -254,6 +254,8 @@ def render_audio_to_audio() -> None:
                 progress_callback=progress_callback,
                 device=device,
                 scheduler=scheduler,
+                lora_path=lora_path,
+                lora_scale=lora_scale,
             )
 
         # Resize back to original size
