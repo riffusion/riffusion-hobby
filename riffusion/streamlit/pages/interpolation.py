@@ -48,7 +48,7 @@ def render_interpolation() -> None:
         int,
         st.sidebar.number_input(
             "Interpolation steps",
-            value=4,
+            value=12,
             min_value=1,
             max_value=20,
             help="Number of model generations between the two prompts. Controls the duration.",
@@ -85,6 +85,8 @@ def render_interpolation() -> None:
         if init_image_file:
             st.sidebar.image(init_image_file)
 
+    alpha_power = st.sidebar.number_input("Alpha Power", value=1.0)
+
     show_individual_outputs = st.sidebar.checkbox(
         "Show individual outputs",
         value=False,
@@ -95,6 +97,16 @@ def render_interpolation() -> None:
         value=False,
         help="Show each generated image",
     )
+
+    alphas = np.linspace(0, 1, num_interpolation_steps)
+
+    # Apply power scaling to alphas to customize the interpolation curve
+    alphas_shifted = alphas * 2 - 1
+    alphas_shifted = (np.abs(alphas_shifted) ** alpha_power * np.sign(alphas_shifted) + 1) / 2
+    alphas = alphas_shifted
+
+    alphas_str = ", ".join([f"{alpha:.2f}" for alpha in alphas])
+    st.write(f"**Alphas** : [{alphas_str}]")
 
     # Prompt inputs A and B in two columns
 
@@ -114,15 +126,6 @@ def render_interpolation() -> None:
     if not prompt_input_a.prompt or not prompt_input_b.prompt:
         st.info("Enter both prompts to interpolate between them")
         return
-
-    alphas = list(np.linspace(0, 1, num_interpolation_steps))
-    alphas_str = ", ".join([f"{alpha:.2f}" for alpha in alphas])
-    st.write(f"**Alphas** : [{alphas_str}]")
-
-    # TODO(hayk): Apply scaling to alphas like this
-    # T_shifted = T * 2 - 1
-    # T_sample = (np.abs(T_shifted)**t_scale_power * np.sign(T_shifted) + 1) / 2
-    # T_sample = T_sample * (t_end - t_start) + t_start
 
     if init_image_name == "custom":
         if not init_image_file:
@@ -225,7 +228,7 @@ def get_prompt_inputs(
 
     p["denoising"] = right.number_input(
         "Denoising",
-        value=0.5,
+        value=0.75,
         key=f"denoising_{key}",
         help="How much to modify the seed image",
     )
