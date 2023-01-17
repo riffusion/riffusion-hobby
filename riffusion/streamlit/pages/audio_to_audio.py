@@ -52,7 +52,7 @@ def render_audio_to_audio() -> None:
         num_inference_steps = T.cast(
             int,
             st.number_input(
-                "Steps per sample", value=50, help="Number of denoising steps per model run"
+                "Steps per sample", value=25, help="Number of denoising steps per model run"
             ),
         )
 
@@ -115,17 +115,24 @@ def render_audio_to_audio() -> None:
 
     counter = streamlit_util.StreamlitCounter()
 
+    denoising_default = 0.55
     with st.form("audio to audio form"):
         if interpolate:
             left, right = st.columns(2)
 
             with left:
                 st.write("##### Prompt A")
-                prompt_input_a = PromptInput(guidance=guidance, **get_prompt_inputs(key="a"))
+                prompt_input_a = PromptInput(
+                    guidance=guidance,
+                    **get_prompt_inputs(key="a", denoising_default=denoising_default),
+                )
 
             with right:
                 st.write("##### Prompt B")
-                prompt_input_b = PromptInput(guidance=guidance, **get_prompt_inputs(key="b"))
+                prompt_input_b = PromptInput(
+                    guidance=guidance,
+                    **get_prompt_inputs(key="b", denoising_default=denoising_default),
+                )
         elif use_magic_mix:
             prompt = st.text_input("Prompt", key="prompt_a")
 
@@ -150,7 +157,12 @@ def render_audio_to_audio() -> None:
         else:
             prompt_input_a = PromptInput(
                 guidance=guidance,
-                **get_prompt_inputs(key="a", include_negative_prompt=True, cols=True),
+                **get_prompt_inputs(
+                    key="a",
+                    include_negative_prompt=True,
+                    cols=True,
+                    denoising_default=denoising_default,
+                ),
             )
 
         st.form_submit_button("Riff", type="primary", on_click=counter.increment)
@@ -319,7 +331,7 @@ def get_clip_params(advanced: bool = False) -> T.Dict[str, T.Any]:
     p["duration_s"] = cols[1].number_input(
         "Duration [s]",
         min_value=0.0,
-        value=15.0,
+        value=20.0,
     )
 
     if advanced:

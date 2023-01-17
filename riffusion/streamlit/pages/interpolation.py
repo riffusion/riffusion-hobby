@@ -115,11 +115,15 @@ def render_interpolation() -> None:
 
         with left:
             st.write("##### Prompt A")
-            prompt_input_a = PromptInput(guidance=guidance, **get_prompt_inputs(key="a"))
+            prompt_input_a = PromptInput(
+                guidance=guidance, **get_prompt_inputs(key="a", denoising_default=0.75)
+            )
 
         with right:
             st.write("##### Prompt B")
-            prompt_input_b = PromptInput(guidance=guidance, **get_prompt_inputs(key="b"))
+            prompt_input_b = PromptInput(
+                guidance=guidance, **get_prompt_inputs(key="b", denoising_default=0.75)
+            )
 
         st.form_submit_button("Generate", type="primary")
 
@@ -201,6 +205,7 @@ def get_prompt_inputs(
     key: str,
     include_negative_prompt: bool = False,
     cols: bool = False,
+    denoising_default: float = 0.5,
 ) -> T.Dict[str, T.Any]:
     """
     Compute prompt inputs from widgets.
@@ -228,7 +233,7 @@ def get_prompt_inputs(
 
     p["denoising"] = right.number_input(
         "Denoising",
-        value=0.75,
+        value=denoising_default,
         key=f"denoising_{key}",
         help="How much to modify the seed image",
     )

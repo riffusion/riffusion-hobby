@@ -56,7 +56,7 @@ def render_text_to_audio() -> None:
         st.form_submit_button("Riff", type="primary")
 
     with st.sidebar:
-        num_inference_steps = T.cast(int, st.number_input("Inference steps", value=50))
+        num_inference_steps = T.cast(int, st.number_input("Inference steps", value=25))
         width = T.cast(int, st.number_input("Width", value=512))
         guidance = st.number_input(
             "Guidance", value=7.0, help="How much the model listens to the text prompt"
