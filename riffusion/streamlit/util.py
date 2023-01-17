@@ -22,12 +22,12 @@ AUDIO_EXTENSIONS = ["mp3", "wav", "flac", "webm", "m4a", "ogg"]
 IMAGE_EXTENSIONS = ["png", "jpg", "jpeg"]
 
 SCHEDULER_OPTIONS = [
+    "DPMSolverMultistepScheduler",
     "PNDMScheduler",
     "DDIMScheduler",
     "LMSDiscreteScheduler",
     "EulerDiscreteScheduler",
     "EulerAncestralDiscreteScheduler",
-    "DPMSolverMultistepScheduler",
 ]
 
 
