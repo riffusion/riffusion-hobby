@@ -46,6 +46,8 @@ def render_audio_to_audio() -> None:
     device = streamlit_util.select_device(st.sidebar)
     extension = streamlit_util.select_audio_extension(st.sidebar)
 
+    use_magic_mix = st.sidebar.checkbox("Use Magic Mix", False)
+
     with st.sidebar:
         num_inference_steps = T.cast(
             int,
@@ -124,7 +126,27 @@ def render_audio_to_audio() -> None:
             with right:
                 st.write("##### Prompt B")
                 prompt_input_b = PromptInput(guidance=guidance, **get_prompt_inputs(key="b"))
+        elif use_magic_mix:
+            prompt = st.text_input("Prompt", key="prompt_a")
 
+            row = st.columns(4)
+
+            seed = T.cast(
+                int,
+                row[0].number_input(
+                    "Seed",
+                    value=42,
+                    key="seed_a",
+                ),
+            )
+            prompt_input_a = PromptInput(
+                prompt=prompt,
+                seed=seed,
+                guidance=guidance,
+            )
+            magic_mix_kmin = row[1].number_input("Kmin", value=0.3)
+            magic_mix_kmax = row[2].number_input("Kmax", value=0.5)
+            magic_mix_mix_factor = row[3].number_input("Mix Factor", value=0.5)
         else:
             prompt_input_a = PromptInput(
                 guidance=guidance,
@@ -192,6 +214,7 @@ def render_audio_to_audio() -> None:
                 progress_callback = progress.progress
 
         if interpolate:
+            assert use_magic_mix is False, "Cannot use magic mix and interpolate together"
             inputs = InferenceInput(
                 alpha=float(alphas[i]),
                 num_inference_steps=num_inference_steps,
@@ -204,6 +227,20 @@ def render_audio_to_audio() -> None:
                 inputs=inputs,
                 init_image=init_image_resized,
                 device=device,
+            )
+        elif use_magic_mix:
+            assert not prompt_input_a.negative_prompt, "No negative prompt with magic mix"
+            image = streamlit_util.run_img2img_magic_mix(
+                prompt=prompt_input_a.prompt,
+                init_image=init_image_resized,
+                num_inference_steps=num_inference_steps,
+                guidance_scale=guidance,
+                seed=prompt_input_a.seed,
+                kmin=magic_mix_kmin,
+                kmax=magic_mix_kmax,
+                mix_factor=magic_mix_mix_factor,
+                device=device,
+                scheduler=scheduler,
             )
         else:
             image = streamlit_util.run_img2img(
