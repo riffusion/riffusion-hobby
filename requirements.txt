@@ -16,4 +16,5 @@ sox
 streamlit>=1.10.0
 torch
 torchaudio
+torchvision
 transformers
