@@ -8,7 +8,7 @@ import typing as T
 import pydub
 import streamlit as st
 import torch
-from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionPipeline
+from diffusers import DiffusionPipeline, StableDiffusionImg2ImgPipeline, StableDiffusionPipeline
 from PIL import Image
 
 from riffusion.audio_splitter import AudioSplitter
@@ -256,6 +256,20 @@ def select_audio_extension(container: T.Any = st.sidebar) -> str:
     return extension
 
 
+def select_scheduler(container: T.Any = st.sidebar) -> str:
+    """
+    Dropdown to select a scheduler.
+    """
+    scheduler = st.sidebar.selectbox(
+        "Scheduler",
+        options=SCHEDULER_OPTIONS,
+        index=0,
+        help="Which diffusion scheduler to use",
+    )
+    assert scheduler is not None
+    return scheduler
+
+
 @st.experimental_memo
 def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
     return pydub.AudioSegment.from_file(audio_file)
@@ -264,6 +278,52 @@ def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
 @st.experimental_singleton
 def get_audio_splitter(device: str = "cuda"):
     return AudioSplitter(device=device)
+
+
+@st.experimental_singleton
+def load_magic_mix_pipeline(device: str = "cuda", scheduler: str = SCHEDULER_OPTIONS[0]):
+    pipeline = DiffusionPipeline.from_pretrained(
+        "riffusion/riffusion-model-v1",
+        custom_pipeline="magic_mix",
+    ).to(device)
+
+    pipeline.scheduler = get_scheduler(scheduler, pipeline.scheduler.config)
+
+    return pipeline
+
+
+@st.cache
+def run_img2img_magic_mix(
+    prompt: str,
+    init_image: Image.Image,
+    num_inference_steps: int,
+    guidance_scale: float,
+    seed: int,
+    kmin: float,
+    kmax: float,
+    mix_factor: float,
+    device: str = "cuda",
+    scheduler: str = SCHEDULER_OPTIONS[0],
+):
+    """
+    Run the magic mix pipeline for img2img.
+    """
+    with pipeline_lock():
+        pipeline = load_magic_mix_pipeline(
+            device=device,
+            scheduler=scheduler,
+        )
+
+        return pipeline(
+            init_image,
+            prompt=prompt,
+            kmin=kmin,
+            kmax=kmax,
+            mix_factor=mix_factor,
+            seed=seed,
+            guidance_scale=guidance_scale,
+            steps=num_inference_steps,
+        )
 
 
 @st.cache
