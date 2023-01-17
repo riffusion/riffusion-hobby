@@ -17,7 +17,11 @@ Then you can run predictions:
 
     cog predict -i prompt_a="funky synth solo"
 
-You can also view the model on replicate [here](https://replicate.com/hmartiro/riffusion). Owners
+You can also view the model on Replicate [here](https://replicate.com/riffusion/riffusion). Owners
 can push an updated version of the model like so:
+    
+    # download weights locally if you haven't already
+    cog run python -m integrations.cog_riffusion --download_weights
 
-    cog push r8.im/hmartiro/riffusion
+    cog login
+    cog push r8.im/riffusion/riffusion
