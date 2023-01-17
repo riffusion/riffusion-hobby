@@ -1,0 +1,99 @@
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+
+# Which rules to run
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    "W",
+    # isort
+    "I001"
+]
+
+ignore = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+per-file-ignores = {}
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10.
+target-version = "py310"
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.mypy]
+python_version = "3.10"
+
+[[tool.mypy.overrides]]
+module = "argh.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "cog.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "diffusers.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "lora_diffusion.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "numpy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pydub.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "scipy.fft.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "scipy.io.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torchaudio.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "transformers.*"
+ignore_missing_imports = true

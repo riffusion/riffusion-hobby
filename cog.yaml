@@ -1,0 +1,38 @@
+# Configuration for Cog ⚙️
+# Reference: https://github.com/replicate/cog/blob/main/docs/yaml.md
+
+build:
+  # set to true if your model requires a GPU
+  gpu: true
+
+  # a list of ubuntu apt packages to install
+  system_packages:
+    - "ffmpeg"
+    - "libsndfile1"
+
+  # python version in the form '3.8' or '3.8.12'
+  python_version: "3.9"
+
+  # a list of packages in the format <package-name>==<version>
+  python_packages:
+    - "accelerate==0.15.0"
+    - "argh==0.26.2"
+    - "dacite==1.6.0"
+    - "diffusers==0.10.2"
+    - "flask_cors==3.0.10"
+    - "flask==1.1.2"
+    - "numpy==1.19.4"
+    - "pillow==9.1.0"
+    - "pydub==0.25.1"
+    - "scipy==1.6.3"
+    - "torch==1.13.0"
+    - "torchaudio==0.13.0"
+    - "transformers==4.25.1"
+
+  # commands run after the environment is setup
+  # run:
+    # - "echo env is ready!"
+    # - "echo another command if needed"
+
+# predict.py defines how predictions are run on your model
+predict: "integrations/cog_riffusion.py:RiffusionPredictor"
