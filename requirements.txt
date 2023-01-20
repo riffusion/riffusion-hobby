@@ -18,3 +18,4 @@ torch
 torchaudio
 torchvision
 transformers
+git+https://github.com/cloneofsimo/lora.git

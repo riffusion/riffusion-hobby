@@ -29,6 +29,9 @@ def render_text_to_audio() -> None:
     device = streamlit_util.select_device(st.sidebar)
     extension = streamlit_util.select_audio_extension(st.sidebar)
 
+    lora_path = st.sidebar.text_input("Lora Path", "")
+    lora_scale = st.sidebar.number_input("Lora Scale", value=1.0)
+
     with st.form("Inputs"):
         prompt = st.text_input("Prompt")
         negative_prompt = st.text_input("Negative prompt")
@@ -93,6 +96,8 @@ def render_text_to_audio() -> None:
             height=512,
             device=device,
             scheduler=scheduler,
+            lora_path=lora_path,
+            lora_scale=lora_scale,
         )
         st.image(image)
 
