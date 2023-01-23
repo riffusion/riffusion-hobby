@@ -1,10 +1,8 @@
 ---
 name: 🕊️ Release Workflow
 
-
 on:
   workflow_dispatch:
-
 
 env:
   ALLOWED_PUBLISHERS: "${{ github.actor == 'hmartiro' || github.actor == 'SethForsgren' }}"
@@ -17,12 +15,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
-
 jobs:
   release-workflow:
     name: 🏹 Release Workflow
-    timeout-minutes: 10
     runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
     steps:
       - name: 📩 Checkout the source w/ full depth(for tags and SCM)
         uses: actions/checkout@v3
