@@ -46,7 +46,7 @@ conda activate riffusion
 
 Install Python dependencies:
 ```
-python -m pip install -e .
+python -m pip install -e ".[developer]"
 ```
 
 In order to use audio formats other than WAV, [ffmpeg](https://ffmpeg.org/download.html) is required.
