@@ -183,7 +183,14 @@ def compute_request(
     return json.dumps(dataclasses.asdict(output))
 
 
-if __name__ == "__main__":
+def main():
+    """
+    Run the flask app
+    """
     import argh
 
     argh.dispatch_command(run_app)
+
+
+if __name__ == "__main__":
+    main()
