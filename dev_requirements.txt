@@ -1,7 +1,0 @@
-black
-ipdb
-mypy
-ruff
-types-Flask-Cors
-types-Pillow
-types-requests

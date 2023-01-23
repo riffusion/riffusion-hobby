@@ -1,3 +1,116 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [
+  "hatchling >= 1.11.0",
+  "pip >= 22.0.0"
+]
+
+
+[project.urls]
+Homepage = "https://riffusion.com"
+GitHub   = "https://github.com/riffusion/riffusion"
+
+
+[project.scripts]
+riffusion-cli = "riffusion.cli:main"
+
+
+[project]
+name            = "riffusion"
+version         = "0.0.4"
+description     = "Stable diffusion for real-time music generation."
+readme          = "README.md"
+license         = "MIT"
+requires-python = ">=3.9"
+
+authors = [
+  { name = "Hayk Martiros", email = "hayk.mart@gmail.com" },
+  { name = "Seth Forsgren", email = "contact@sethforsgren.com" },
+]
+
+keywords = [
+  "stable diffusion",
+]
+
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Environment :: Console",
+  "Environment :: GPU",
+  "Environment :: Web Environment",
+  "Framework :: Hatch",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+  "accelerate",
+  "argh",
+  "dacite",
+  "demucs",
+  "diffusers>=0.9.0",
+  "flask",
+  "flask_cors",
+  "numpy",
+  "pillow>=9.1.0",
+  "plotly",
+  "pydub",
+  "pysoundfile",
+  "scipy",
+  "soundfile",
+  "sox",
+  "streamlit>=1.10.0",
+  "torch",
+  "torchaudio",
+  "torchvision",
+  "transformers",
+]
+
+
+[project.optional-dependencies]
+developer = [
+  "black",
+  "ipdb",
+  "mypy",
+  "ruff",
+  "types-Flask-Cors",
+  "types-Pillow",
+  "types-requests",
+]
+
+
+
+[tool.hatch.build]
+ignore-vcs   = false
+reproducible = true
+directory    = "dist"
+include = [
+  ".git",
+  ".github",
+  ".gitignore",
+  "integrations/",
+  "riffusion/",
+  "seed_images/",
+  "test/",
+  "CITATION",
+  "LICENSE",
+  "Makefile",
+  "pyproject.toml",
+  "cog.yaml",
+]
+exclude = [ ]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+
 [tool.black]
 line-length = 100
 
