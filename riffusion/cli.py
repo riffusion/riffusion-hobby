@@ -127,7 +127,10 @@ def sample_clips(
         print(f"Wrote {clip_path}")
 
 
-if __name__ == "__main__":
+def main():
+    """
+    Main entry point for the command line interface.
+    """
     argh.dispatch_commands(
         [
             audio_to_image,
@@ -136,3 +139,7 @@ if __name__ == "__main__":
             print_exif,
         ]
     )
+
+
+if __name__ == "__main__":
+    main()
