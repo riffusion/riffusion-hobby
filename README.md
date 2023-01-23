@@ -46,7 +46,7 @@ conda activate riffusion
 
 Install Python dependencies:
 ```
-python -m pip install -r requirements.txt
+python -m pip install -e .
 ```
 
 In order to use audio formats other than WAV, [ffmpeg](https://ffmpeg.org/download.html) is required.
@@ -105,17 +105,17 @@ Riffusion comes with a command line interface for performing common tasks.
 
 See available commands:
 ```
-python -m riffusion.cli -h
+riffusion-cli -h
 ```
 
 Get help for a specific command:
 ```
-python -m riffusion.cli image-to-audio -h
+riffusion-cli image-to-audio -h
 ```
 
 Execute:
 ```
-python -m riffusion.cli image-to-audio --image spectrogram_image.png --audio clip.wav
+riffusion-cli image-to-audio --image spectrogram_image.png --audio clip.wav
 ```
 
 ## Riffusion Playground
@@ -138,7 +138,7 @@ Riffusion can be run as a flask server that provides inference via API. This ser
 Run with:
 
 ```
-python -m riffusion.server --host 127.0.0.1 --port 3013
+riffusion-server --host 127.0.0.1 --port 3013
 ```
 
 You can specify `--checkpoint` with your own directory or huggingface ID in diffusers format.
