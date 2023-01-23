@@ -13,7 +13,7 @@ GitHub   = "https://github.com/riffusion/riffusion"
 
 [project.scripts]
 riffusion-cli = "riffusion.cli:main"
-riffusion-server = "riffusion.server"
+riffusion-server = "riffusion.server:main"
 
 [project]
 name            = "riffusion"
