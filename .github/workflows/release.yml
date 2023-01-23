@@ -1,0 +1,69 @@
+---
+name: 🕊️ Release Workflow
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      target-host:
+        description: 'The host to ping'
+        required: true
+        default: 'google.com'
+      target-port:
+        description: 'The port to scan'
+        required: true
+        default: '443'
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+
+env:
+  ALLOWED_PUBLISHERS: "${{ github.actor == 'hmartiro' || github.actor == 'SethForsgren' }}"
+  STABLE_PYTHON_VERSION: '3.9'
+  PYTHONUNBUFFERED: "1"
+  FORCE_COLOR: "1"
+
+
+jobs:
+  release-workflow:
+    name: 🏹 Release Workflow
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📩 Checkout the source w/ full depth(for tags and SCM)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python ${{ env.STABLE_PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.STABLE_PYTHON_VERSION }}
+
+      - name: 🧱 Build wheel
+        run: |
+          pip install --upgrade pip
+          pip install --editable ".[developer]"
+          hatch build --clean --target wheel
+
+      - name: 🐦 Release wheel
+        if: ${{ env.ALLOWED_PUBLISHERS && !failure() }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ SECRETS.PYPI_TOKEN }}
+          packages_dir: dist
+          verbose: true
+
+      - name: 📁 Archiving Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ env.ALLOWED_PUBLISHERS && !failure() }}
+        continue-on-error: true
+        with:
+          name: scan-artifacts
+          retention-days: 1
+          path: |
+            dist
+
