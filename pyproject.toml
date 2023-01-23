@@ -55,18 +55,20 @@ dependencies = [
   "argh",
   "dacite",
   "demucs",
-  "diffusers>=0.9.0",
+  "diffusers >= 0.9.0",
   "flask",
   "flask_cors",
   "numpy",
-  "pillow>=9.1.0",
+  "pillow >= 9.1.0",
   "plotly",
   "pydub",
   "pysoundfile",
   "scipy",
   "soundfile",
   "sox",
-  "streamlit>=1.10.0",
+  # We currently need to pin the streamlit dependency, whose latest version is broken
+  # See https://github.com/streamlit/streamlit/issues/5867
+  "streamlit == 1.15.2",
   "torch",
   "torchaudio",
   "torchvision",
@@ -77,6 +79,7 @@ dependencies = [
 [project.optional-dependencies]
 developer = [
   "hatch",
+  "wheel",
   "black",
   "ipdb",
   "mypy",
