@@ -29,15 +29,20 @@ authors = [
 ]
 
 keywords = [
+  "audio",
+  "music",
+  "diffusion",
+  "diffusers ",
   "stable diffusion",
 ]
 
 classifiers = [
-  "Development Status :: 1 - Planning",
+  "Development Status :: 3 - Alpha",
   "Environment :: Console",
   "Environment :: GPU",
   "Environment :: Web Environment",
   "Framework :: Hatch",
+  "Framework :: Flask",
   "Intended Audience :: Developers",
   "Intended Audience :: End Users/Desktop",
   "Intended Audience :: Science/Research",
