@@ -10,6 +10,7 @@ import time
 import typing as T
 from pathlib import Path
 
+import argh
 import dacite
 import flask
 import PIL
@@ -187,8 +188,6 @@ def main():
     """
     Run the flask app
     """
-    import argh
-
     argh.dispatch_command(run_app)
 
 
