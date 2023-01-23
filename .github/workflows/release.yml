@@ -4,20 +4,6 @@ name: 🕊️ Release Workflow
 
 on:
   workflow_dispatch:
-    inputs:
-      target-host:
-        description: 'The host to ping'
-        required: true
-        default: 'google.com'
-      target-port:
-        description: 'The port to scan'
-        required: true
-        default: '443'
-
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: true
 
 
 env:
@@ -25,6 +11,11 @@ env:
   STABLE_PYTHON_VERSION: '3.9'
   PYTHONUNBUFFERED: "1"
   FORCE_COLOR: "1"
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
 
 
 jobs:
@@ -45,7 +36,6 @@ jobs:
 
       - name: 🧱 Build wheel
         run: |
-          pip install --upgrade pip
           pip install --editable ".[developer]"
           hatch build --clean --target wheel
 
