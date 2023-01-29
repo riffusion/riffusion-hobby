@@ -28,6 +28,7 @@ def render_text_to_audio() -> None:
 
     device = streamlit_util.select_device(st.sidebar)
     extension = streamlit_util.select_audio_extension(st.sidebar)
+    checkpoint = streamlit_util.select_checkpoint(st.sidebar)
 
     with st.form("Inputs"):
         prompt = st.text_input("Prompt")
@@ -69,15 +70,25 @@ def render_text_to_audio() -> None:
         )
         assert scheduler is not None
 
+        use_20k = st.checkbox("Use 20kHz", value=False)
+
     if not prompt:
         st.info("Enter a prompt")
         return
 
-    # TODO(hayk): Change the frequency range to [20, 20k] once the model is retrained
-    params = SpectrogramParams(
-        min_frequency=0,
-        max_frequency=10000,
-    )
+    if use_20k:
+        params = SpectrogramParams(
+            min_frequency=10,
+            max_frequency=20000,
+            sample_rate=44100,
+            stereo=True,
+        )
+    else:
+        params = SpectrogramParams(
+            min_frequency=0,
+            max_frequency=10000,
+            stereo=False,
+        )
 
     seed = starting_seed
     for i in range(1, num_clips + 1):
@@ -91,6 +102,7 @@ def render_text_to_audio() -> None:
             seed=seed,
             width=width,
             height=512,
+            checkpoint=checkpoint,
             device=device,
             scheduler=scheduler,
         )
