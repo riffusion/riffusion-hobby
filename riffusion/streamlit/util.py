@@ -18,6 +18,8 @@ from riffusion.spectrogram_params import SpectrogramParams
 
 # TODO(hayk): Add URL params
 
+DEFAULT_CHECKPOINT = "riffusion/riffusion-model-v1"
+
 AUDIO_EXTENSIONS = ["mp3", "wav", "flac", "webm", "m4a", "ogg"]
 IMAGE_EXTENSIONS = ["png", "jpg", "jpeg"]
 
@@ -33,7 +35,7 @@ SCHEDULER_OPTIONS = [
 
 @st.experimental_singleton
 def load_riffusion_checkpoint(
-    checkpoint: str = "riffusion/riffusion-model-v1",
+    checkpoint: str = DEFAULT_CHECKPOINT,
     no_traced_unet: bool = False,
     device: str = "cuda",
 ) -> RiffusionPipeline:
@@ -49,7 +51,7 @@ def load_riffusion_checkpoint(
 
 @st.experimental_singleton
 def load_stable_diffusion_pipeline(
-    checkpoint: str = "riffusion/riffusion-model-v1",
+    checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
     dtype: torch.dtype = torch.float16,
     scheduler: str = SCHEDULER_OPTIONS[0],
@@ -117,7 +119,7 @@ def pipeline_lock() -> threading.Lock:
 
 @st.experimental_singleton
 def load_stable_diffusion_img2img_pipeline(
-    checkpoint: str = "riffusion/riffusion-model-v1",
+    checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
     dtype: torch.dtype = torch.float16,
     scheduler: str = SCHEDULER_OPTIONS[0],
@@ -152,6 +154,7 @@ def run_txt2img(
     seed: int,
     width: int,
     height: int,
+    checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> Image.Image:
@@ -159,7 +162,11 @@ def run_txt2img(
     Run the text to image pipeline with caching.
     """
     with pipeline_lock():
-        pipeline = load_stable_diffusion_pipeline(device=device, scheduler=scheduler)
+        pipeline = load_stable_diffusion_pipeline(
+            checkpoint=checkpoint,
+            device=device,
+            scheduler=scheduler,
+        )
 
         generator_device = "cpu" if device.lower().startswith("mps") else device
         generator = torch.Generator(device=generator_device).manual_seed(seed)
@@ -270,6 +277,18 @@ def select_scheduler(container: T.Any = st.sidebar) -> str:
     return scheduler
 
 
+def select_checkpoint(container: T.Any = st.sidebar) -> str:
+    """
+    Provide a custom model checkpoint.
+    """
+    custom_checkpoint = container.text_input(
+        "Custom Checkpoint",
+        value="",
+        help="Provide a custom model checkpoint",
+    )
+    return custom_checkpoint or DEFAULT_CHECKPOINT
+
+
 @st.experimental_memo
 def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
     return pydub.AudioSegment.from_file(audio_file)
@@ -281,9 +300,13 @@ def get_audio_splitter(device: str = "cuda"):
 
 
 @st.experimental_singleton
-def load_magic_mix_pipeline(device: str = "cuda", scheduler: str = SCHEDULER_OPTIONS[0]):
+def load_magic_mix_pipeline(
+    checkpoint: str = DEFAULT_CHECKPOINT,
+    device: str = "cuda",
+    scheduler: str = SCHEDULER_OPTIONS[0],
+):
     pipeline = DiffusionPipeline.from_pretrained(
-        "riffusion/riffusion-model-v1",
+        checkpoint,
         custom_pipeline="magic_mix",
     ).to(device)
 
@@ -302,6 +325,7 @@ def run_img2img_magic_mix(
     kmin: float,
     kmax: float,
     mix_factor: float,
+    checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
 ):
@@ -310,6 +334,7 @@ def run_img2img_magic_mix(
     """
     with pipeline_lock():
         pipeline = load_magic_mix_pipeline(
+            checkpoint=checkpoint,
             device=device,
             scheduler=scheduler,
         )
@@ -335,12 +360,17 @@ def run_img2img(
     guidance_scale: float,
     seed: int,
     negative_prompt: T.Optional[str] = None,
+    checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
     progress_callback: T.Optional[T.Callable[[float], T.Any]] = None,
 ) -> Image.Image:
     with pipeline_lock():
-        pipeline = load_stable_diffusion_img2img_pipeline(device=device, scheduler=scheduler)
+        pipeline = load_stable_diffusion_img2img_pipeline(
+            checkpoint=checkpoint,
+            device=device,
+            scheduler=scheduler,
+        )
 
         generator_device = "cpu" if device.lower().startswith("mps") else device
         generator = torch.Generator(device=generator_device).manual_seed(seed)
