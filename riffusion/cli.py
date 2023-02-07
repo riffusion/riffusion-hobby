@@ -213,14 +213,18 @@ def sample_clips_batch(
     mono: bool = False,
     extension: str = "mp3",
     num_threads: T.Optional[int] = None,
+    glob: str = "*",
     limit: int = -1,
     seed: int = -1,
 ):
     """
     Sample short clips from a directory of audio files, multi-threaded.
     """
-    audio_paths = list(Path(audio_dir).glob("*"))
+    audio_paths = list(Path(audio_dir).glob(glob))
     audio_paths.sort()
+
+    # Exclude json
+    audio_paths = [p for p in audio_paths if p.suffix != ".json"]
 
     if limit > 0:
         audio_paths = audio_paths[:limit]
@@ -242,25 +246,23 @@ def sample_clips_batch(
 
         segment_duration_ms = int(segment.duration_seconds * 1000)
         for i in range(num_clips_per_file):
-            clip_start_ms = np.random.randint(0, segment_duration_ms - duration_ms)
+            try:
+                clip_start_ms = np.random.randint(0, segment_duration_ms - duration_ms)
+            except ValueError:
+                continue
+
             clip = segment[clip_start_ms : clip_start_ms + duration_ms]
 
             clip_name = (
-                f"{audio_path.stem}_{i}"
-                "start_{clip_start_ms}_ms_duration_{duration_ms}_ms.{extension}"
+                f"{audio_path.stem}_{i}_"
+                f"start_{clip_start_ms}_ms_dur_{duration_ms}_ms.{extension}"
             )
             clip.export(output_path / clip_name, format=extension)
 
     pool = ThreadPool(processes=num_threads)
     with tqdm.tqdm(total=len(audio_paths)) as pbar:
         for result in pool.imap_unordered(process_one, audio_paths):
-            # process_one(audio_path)
             pbar.update()
-
-    # with tqdm.tqdm(total=len(audio_paths)) as pbar:
-    #     for i, _ in enumerate(pool.imap_unordered(process_one, audio_paths)):
-    #         pass
-    # pbar.update()
 
 
 if __name__ == "__main__":
