@@ -32,6 +32,8 @@ def render_image_to_audio() -> None:
     device = streamlit_util.select_device(st.sidebar)
     extension = streamlit_util.select_audio_extension(st.sidebar)
 
+    use_20k = st.sidebar.checkbox("Use 20kHz", value=False)
+
     image_file = st.file_uploader(
         "Upload a file",
         type=streamlit_util.IMAGE_EXTENSIONS,
@@ -52,7 +54,14 @@ def render_image_to_audio() -> None:
         params = SpectrogramParams.from_exif(exif=image.getexif())
     except KeyError:
         st.info("Could not find spectrogram parameters in exif data. Using defaults.")
-        params = SpectrogramParams()
+        if use_20k:
+            params = SpectrogramParams(
+                min_frequency=10,
+                max_frequency=20000,
+                stereo=True,
+            )
+        else:
+            params = SpectrogramParams()
 
     with st.expander("Spectrogram Parameters", expanded=False):
         st.json(dataclasses.asdict(params))
