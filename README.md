@@ -60,6 +60,15 @@ If torchaudio has no backend, you may need to install `libsndfile`. See [this is
 
 If you have an issue, try upgrading [diffusers](https://github.com/huggingface/diffusers). Tested with 0.9 - 0.11.
 
+#### Additional Windows dependencies
+If using a Windows host, the default `demucs` dependency will not install when calling `requirements.txt` so this must 
+be installed manually with:
+
+```shell
+python.exe -m pip install -U demucs PySoundFile
+```
+
+
 Guides:
 * [Simple Install Guide for Windows](https://www.reddit.com/r/riffusion/comments/zrubc9/installation_guide_for_riffusion_app_inference/)
 
@@ -74,6 +83,17 @@ Guides:
 To use with CUDA, make sure you have torch and torchaudio installed with CUDA support. See the
 [install guide](https://pytorch.org/get-started/locally/) or
 [stable wheels](https://download.pytorch.org/whl/torch_stable.html).
+
+#### Installing Pytorch with CUDA
+The default version of `pytorch` will only install the binary compiled for `cpu`. If you have a CUDA capable GPU, 
+then use the following commands to install the `cuda` version:
+
+```shell
+# conda (slow, may hang):
+conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvidia
+# pip:
+python.exe -m pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
+```
 
 To generate audio in real-time, you need a GPU that can run stable diffusion with approximately 50
 steps in under five seconds, such as a 3090 or A10G.

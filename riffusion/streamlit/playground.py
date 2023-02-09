@@ -25,6 +25,9 @@ def render_main():
         create_link(":scroll: Text to Audio Batch", "/text_to_audio_batch")
         st.write("Generate audio in batch from a JSON file of text prompts.")
 
+        create_link(":wave: Audio to Audio Batch", "/audio_to_audio_batch")
+        st.write("Generate audio in batch from audio file and text prompt.")
+
         create_link(":paperclip: Sample Clips", "/sample_clips")
         st.write("Export short clips from an audio file.")
 
