@@ -1830,6 +1830,18 @@ files = [
 ]
 
 [[package]]
+name = "pydub-stubs"
+version = "0.25.1.0"
+description = "Stub-only package containing type information for pydub"
+category = "dev"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "pydub-stubs-0.25.1.0.tar.gz", hash = "sha256:57ff97da5faf221eda0f508e62a187766342490e07a450c63a76ca7e970da4da"},
+    {file = "pydub_stubs-0.25.1.0-py3-none-any.whl", hash = "sha256:7ff185c40838dfdfb344222ad6d962e99682fa2787557d771023af8c24593ddc"},
+]
+
+[[package]]
 name = "pygments"
 version = "2.14.0"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -3005,4 +3017,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.12,>=3.8,!=3.9.7" # supported python defined by constraints of scipy and streamlit
-content-hash = "71ec845c1d8d0dc80b4ae7a1c3ce5d76062e7e0af0dc2e95e07dfa485616cdb1"
+content-hash = "d2b7ea8d65b8b772556a23b9887f124ec3bb7b337ddddbf8957b0ca40e31066e"
