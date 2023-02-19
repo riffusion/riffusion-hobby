@@ -48,9 +48,18 @@ conda create --name riffusion python=3.9
 conda activate riffusion
 ```
 
-Install Python dependencies:
+Install Python package:
+
+```shell
+pip install -U riffusion
 ```
-python -m pip install -r requirements.txt
+
+or clone the repository and install from source:
+
+```shell
+git clone https://github.com/riffusion/riffusion.git
+cd riffusion
+python -m pip install --editable .
 ```
 
 In order to use audio formats other than WAV, [ffmpeg](https://ffmpeg.org/download.html) is required.
