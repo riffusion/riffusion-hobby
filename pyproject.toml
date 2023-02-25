@@ -13,6 +13,7 @@ packages = [{ include = "riffusion" }]
 [tool.poetry.scripts]
 riffusion = "riffusion.cli:main"
 riffusion-server = "riffusion.server:main"
+riffusion-playground = "riffusion.playground:main"
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.9.7 || >3.9.7,<3.12" # supported python defined by constraints of scipy and streamlit
