@@ -2,7 +2,6 @@
 
 [global]
 disableWatchdogWarning = false
-sharingMode = "off"
 showWarningOnDirectExecution = true
 
 [client]
@@ -19,7 +18,6 @@ fixMatplotlib = true
 [server]
 folderWatchBlacklist = []
 headless = true
-liveSave = false
 runOnSave = true
 port = 8501
 enableCORS = true
