@@ -1,6 +1,4 @@
-"""
-Streamlit utilities (mostly cached wrappers around riffusion code).
-"""
+"""Streamlit utilities (mostly cached wrappers around riffusion code)."""
 import io
 import threading
 import typing as T
@@ -39,9 +37,7 @@ def load_riffusion_checkpoint(
     no_traced_unet: bool = False,
     device: str = "cuda",
 ) -> RiffusionPipeline:
-    """
-    Load the riffusion pipeline.
-    """
+    """Load the riffusion pipeline."""
     return RiffusionPipeline.load_checkpoint(
         checkpoint=checkpoint,
         use_traced_unet=not no_traced_unet,
@@ -78,9 +74,7 @@ def load_stable_diffusion_pipeline(
 
 
 def get_scheduler(scheduler: str, config: T.Any) -> T.Any:
-    """
-    Construct a denoising scheduler from a string.
-    """
+    """Construct a denoising scheduler from a string."""
     if scheduler == "PNDMScheduler":
         from diffusers import PNDMScheduler
 
@@ -111,9 +105,7 @@ def get_scheduler(scheduler: str, config: T.Any) -> T.Any:
 
 @st.cache_resource
 def pipeline_lock() -> threading.Lock:
-    """
-    Singleton lock used to prevent concurrent access to any model pipeline.
-    """
+    """Singleton lock used to prevent concurrent access to any model pipeline."""
     return threading.Lock()
 
 
@@ -124,8 +116,7 @@ def load_stable_diffusion_img2img_pipeline(
     dtype: torch.dtype = torch.float16,
     scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> StableDiffusionImg2ImgPipeline:
-    """
-    Load the image to image pipeline.
+    """Load the image to image pipeline.
 
     TODO(hayk): Merge this into RiffusionPipeline to just load one model.
     """
@@ -158,9 +149,7 @@ def run_txt2img(
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> Image.Image:
-    """
-    Run the text to image pipeline with caching.
-    """
+    """Run the text to image pipeline with caching."""
     with pipeline_lock():
         pipeline = load_stable_diffusion_pipeline(
             checkpoint=checkpoint,
@@ -188,7 +177,7 @@ def run_txt2img(
 def spectrogram_image_converter(
     params: SpectrogramParams,
     device: str = "cuda",
-) -> SpectrogramImageConverter:
+) -> SpectrogramImageConverter:  # noqa: D103
     return SpectrogramImageConverter(params=params, device=device)
 
 
@@ -197,7 +186,7 @@ def spectrogram_image_from_audio(
     segment: pydub.AudioSegment,
     params: SpectrogramParams,
     device: str = "cuda",
-) -> Image.Image:
+) -> Image.Image:  # noqa: D103
     converter = spectrogram_image_converter(params=params, device=device)
     return converter.spectrogram_image_from_audio(segment)
 
@@ -207,7 +196,7 @@ def audio_segment_from_spectrogram_image(
     image: Image.Image,
     params: SpectrogramParams,
     device: str = "cuda",
-) -> pydub.AudioSegment:
+) -> pydub.AudioSegment:  # noqa: D103
     converter = spectrogram_image_converter(params=params, device=device)
     return converter.audio_from_spectrogram_image(image)
 
@@ -218,19 +207,17 @@ def audio_bytes_from_spectrogram_image(
     params: SpectrogramParams,
     device: str = "cuda",
     output_format: str = "mp3",
-) -> io.BytesIO:
+) -> io.BytesIO:  # noqa: D103
     segment = audio_segment_from_spectrogram_image(image=image, params=params, device=device)
 
     audio_bytes = io.BytesIO()
-    segment.export(audio_bytes, format=output_format)
+    segment.export(audio_bytes, format=output_format)  # type: ignore
 
     return audio_bytes
 
 
 def select_device(container: T.Any = st.sidebar) -> str:
-    """
-    Dropdown to select a torch device, with an intelligent default.
-    """
+    """Dropdown to select a torch device, with an intelligent default."""
     default_device = "cpu"
     if torch.cuda.is_available():
         default_device = "cuda"
@@ -244,43 +231,37 @@ def select_device(container: T.Any = st.sidebar) -> str:
         index=device_options.index(default_device),
         help="Which compute device to use. CUDA is recommended.",
     )
-    assert device is not None
+    assert device is not None, "Device must be selected"  # nosec: B101
 
     return device
 
 
 def select_audio_extension(container: T.Any = st.sidebar) -> str:
-    """
-    Dropdown to select an audio extension, with an intelligent default.
-    """
-    default = "mp3" if pydub.AudioSegment.ffmpeg else "wav"
+    """Dropdown to select an audio extension, with an intelligent default."""
+    default = "mp3" if pydub.AudioSegment.ffmpeg else "wav"  # type: ignore
     extension = container.selectbox(
         "Output format",
         options=AUDIO_EXTENSIONS,
         index=AUDIO_EXTENSIONS.index(default),
     )
-    assert extension is not None
+    assert extension is not None, "Extension must be selected"  # nosec: B101
     return extension
 
 
 def select_scheduler(container: T.Any = st.sidebar) -> str:
-    """
-    Dropdown to select a scheduler.
-    """
+    """Dropdown to select a scheduler."""
     scheduler = st.sidebar.selectbox(
         "Scheduler",
         options=SCHEDULER_OPTIONS,
         index=0,
         help="Which diffusion scheduler to use",
     )
-    assert scheduler is not None
+    assert scheduler is not None, "Scheduler must be selected"  # nosec: B101
     return scheduler
 
 
 def select_checkpoint(container: T.Any = st.sidebar) -> str:
-    """
-    Provide a custom model checkpoint.
-    """
+    """Provide a custom model checkpoint."""
     custom_checkpoint = container.text_input(
         "Custom Checkpoint",
         value="",
@@ -290,12 +271,12 @@ def select_checkpoint(container: T.Any = st.sidebar) -> str:
 
 
 @st.cache_data
-def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
-    return pydub.AudioSegment.from_file(audio_file)
+def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:  # noqa: D103
+    return pydub.AudioSegment.from_file(audio_file)  # type: ignore
 
 
 @st.cache_resource
-def get_audio_splitter(device: str = "cuda"):
+def get_audio_splitter(device: str = "cuda"):  # noqa: D103
     return AudioSplitter(device=device)
 
 
@@ -304,7 +285,7 @@ def load_magic_mix_pipeline(
     checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
-):
+):  # noqa: D103
     pipeline = DiffusionPipeline.from_pretrained(
         checkpoint,
         custom_pipeline="magic_mix",
@@ -329,9 +310,7 @@ def run_img2img_magic_mix(
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
 ):
-    """
-    Run the magic mix pipeline for img2img.
-    """
+    """Run the magic mix pipeline for img2img."""
     with pipeline_lock():
         pipeline = load_magic_mix_pipeline(
             checkpoint=checkpoint,
@@ -364,7 +343,7 @@ def run_img2img(
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
     progress_callback: T.Optional[T.Callable[[float], T.Any]] = None,
-) -> Image.Image:
+) -> Image.Image:  # noqa: D103
     with pipeline_lock():
         pipeline = load_stable_diffusion_img2img_pipeline(
             checkpoint=checkpoint,
@@ -398,20 +377,18 @@ def run_img2img(
 
 
 class StreamlitCounter:
-    """
-    Simple counter stored in streamlit session state.
-    """
+    """Simple counter stored in streamlit session state."""
 
     def __init__(self, key="_counter"):
         self.key = key
         if not st.session_state.get(self.key):
             st.session_state[self.key] = 0
 
-    def increment(self):
+    def increment(self):  # noqa: D102
         st.session_state[self.key] += 1
 
     @property
-    def value(self):
+    def value(self):  # noqa: D102
         return st.session_state[self.key]
 
 
@@ -420,13 +397,13 @@ def display_and_download_audio(
     name: str,
     extension: str = "mp3",
 ) -> None:
-    """
-    Display the given audio segment and provide a button to download it with
-    a proper file name, since st.audio doesn't support that.
+    """Display the given audio segment and provide a button to download it.
+
+    This includes a proper file name, since st.audio doesn't support that.
     """
     mime_type = f"audio/{extension}"
     audio_bytes = io.BytesIO()
-    segment.export(audio_bytes, format=extension)
+    segment.export(audio_bytes, format=extension)  # type: ignore
     st.audio(audio_bytes, format=mime_type)
 
     st.download_button(

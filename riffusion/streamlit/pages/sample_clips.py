@@ -1,3 +1,4 @@
+"""Streamlit page for sampling clips from an audio file."""
 import tempfile
 import typing as T
 from pathlib import Path
@@ -10,7 +11,7 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_sample_clips() -> None:
+def render_sample_clips() -> None:  # noqa: D103
     st.set_page_config(layout="wide", page_icon="🎸")
 
     st.subheader(":paperclip: Sample Clips")
@@ -40,7 +41,7 @@ def render_sample_clips() -> None:
 
     st.audio(audio_file)
 
-    segment = pydub.AudioSegment.from_file(audio_file)
+    segment = pydub.AudioSegment.from_file(audio_file)  # type: ignore
     st.write(
         "  \n".join(
             [
@@ -92,7 +93,7 @@ def render_sample_clips() -> None:
     segment_duration_ms = int(segment.duration_seconds * 1000)
     for i in range(num_clips):
         clip_start_ms = np.random.randint(0, segment_duration_ms - duration_ms)
-        clip = segment[clip_start_ms : clip_start_ms + duration_ms]
+        clip = segment[clip_start_ms : clip_start_ms + duration_ms]  # noqa: E203
 
         clip_name = f"clip_{i}_start_{clip_start_ms}_ms_duration_{duration_ms}_ms"
 

@@ -1,6 +1,4 @@
-"""
-Flask server that serves the riffusion model as an API.
-"""
+"""Flask server that serves the riffusion model as an API."""
 
 import dataclasses
 import io
@@ -47,11 +45,9 @@ def run_app(
     ssl_certificate: T.Optional[str] = None,
     ssl_key: T.Optional[str] = None,
 ):
-    """
-    Run a flask API that serves the given riffusion model checkpoint.
-    """
+    """Run a flask API that serves the given riffusion model checkpoint."""
     # Initialize the model
-    global PIPELINE
+    global PIPELINE  # pylint: disable=global-statement
     PIPELINE = RiffusionPipeline.load_checkpoint(
         checkpoint=checkpoint,
         use_traced_unet=not no_traced_unet,
@@ -66,7 +62,7 @@ def run_app(
     )
 
     if ssl_certificate:
-        assert ssl_key is not None
+        assert ssl_key is not None, "Must provide both a certificate and key"  # nosec: B101
         args["ssl_context"] = (ssl_certificate, ssl_key)
 
     app.run(**args)  # type: ignore
@@ -74,13 +70,14 @@ def run_app(
 
 @app.route("/run_inference/", methods=["POST"])
 def run_inference():
-    """
-    Execute the riffusion model as an API.
+    """Execute the riffusion model as an API.
 
-    Inputs:
+    Inputs
+    ------
         Serialized JSON of the InferenceInput dataclass
 
-    Returns:
+    Returns
+    -------
         Serialized JSON of the InferenceOutput dataclass
     """
     start_time = time.time()
@@ -118,10 +115,10 @@ def compute_request(
     pipeline: RiffusionPipeline,
     seed_images_dir: str,
 ) -> T.Union[str, T.Tuple[str, int]]:
-    """
-    Does all the heavy lifting of the request.
+    """Do all the heavy lifting of the request.
 
-    Args:
+    Args
+    ----
         inputs: The input dataclass
         pipeline: The riffusion model pipeline
         seed_images_dir: The directory where seed images are stored
@@ -165,7 +162,7 @@ def compute_request(
 
     # Export audio to MP3 bytes
     mp3_bytes = io.BytesIO()
-    segment.export(mp3_bytes, format="mp3")
+    segment.export(mp3_bytes, format="mp3")  # type: ignore
     mp3_bytes.seek(0)
 
     # Export image to JPEG bytes

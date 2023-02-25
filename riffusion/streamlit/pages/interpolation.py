@@ -1,3 +1,4 @@
+"""Streamlit page for interpolation between prompts."""
 import dataclasses
 import io
 import typing as T
@@ -13,7 +14,7 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_interpolation() -> None:
+def render_interpolation() -> None:  # noqa: D103
     st.set_page_config(layout="wide", page_icon="🎸")
 
     st.subheader(":performing_arts: Interpolation")
@@ -75,7 +76,7 @@ def render_interpolation() -> None:
         index=0,
         help="Which seed image to use for img2img. Custom allows uploading your own.",
     )
-    assert init_image_name is not None
+    assert init_image_name is not None, "init_image_name should not be None"  # nosec: B101
     if init_image_name == "custom":
         init_image_file = st.sidebar.file_uploader(
             "Upload a custom seed image",
@@ -177,7 +178,10 @@ def render_interpolation() -> None:
     st.write("#### Final Output")
 
     # TODO(hayk): Concatenate with overlap and better blending like in audio to audio
-    audio_segments = [pydub.AudioSegment.from_file(audio_bytes) for audio_bytes in audio_bytes_list]
+    audio_segments = [
+        pydub.AudioSegment.from_file(audio_bytes)  # type: ignore
+        for audio_bytes in audio_bytes_list
+    ]
     concat_segment = audio_segments[0]
     for segment in audio_segments[1:]:
         concat_segment = concat_segment.append(segment, crossfade=0)
@@ -207,9 +211,7 @@ def get_prompt_inputs(
     cols: bool = False,
     denoising_default: float = 0.5,
 ) -> T.Dict[str, T.Any]:
-    """
-    Compute prompt inputs from widgets.
-    """
+    """Compute prompt inputs from widgets."""
     p: T.Dict[str, T.Any] = {}
 
     # Optionally use columns
@@ -245,9 +247,7 @@ def get_prompt_inputs(
 def run_interpolation(
     inputs: InferenceInput, init_image: Image.Image, device: str = "cuda", extension: str = "mp3"
 ) -> T.Tuple[Image.Image, io.BytesIO]:
-    """
-    Cached function for riffusion interpolation.
-    """
+    """Run riffusion interpolation."""
     pipeline = streamlit_util.load_riffusion_checkpoint(
         device=device,
         # No trace so we can have variable width
