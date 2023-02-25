@@ -93,7 +93,7 @@ tzdata==2022.7 ; python_full_version >= "3.8.1" and python_full_version != "3.9.
 tzlocal==4.2 ; python_full_version >= "3.8.1" and python_full_version != "3.9.7" and python_version < "3.12"
 urllib3==1.26.14 ; python_full_version >= "3.8.1" and python_version < "3.12" and python_full_version != "3.9.7"
 validators==0.20.0 ; python_full_version >= "3.8.1" and python_full_version != "3.9.7" and python_version < "3.12"
-watchdog==2.2.1 ; python_full_version >= "3.8.1" and python_full_version != "3.9.7" and python_version < "3.12" and platform_system != "Darwin"
+watchdog==2.3.0 ; python_full_version >= "3.8.1" and python_full_version != "3.9.7" and python_version < "3.12"
 werkzeug==2.2.2 ; python_full_version >= "3.8.1" and python_full_version != "3.9.7" and python_version < "3.12"
 wheel==0.38.4 ; python_full_version >= "3.8.1" and python_full_version != "3.9.7" and python_version < "3.12" and platform_system == "Linux"
 zipp==3.13.0 ; python_full_version != "3.9.7" and python_version < "3.12" and python_full_version >= "3.8.1"
