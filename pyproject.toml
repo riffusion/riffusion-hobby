@@ -32,7 +32,7 @@ pysoundfile = "^0.9.0.post1"
 scipy = "^1.10.0"
 soundfile = "^0.11.0"
 sox = "^1.4.1"
-streamlit = "^1.18.1"
+streamlit = "~1.17.0"
 torch = "^1.13.1"
 torchaudio = "^0.13.1"
 torchvision = "^0.14.1"
@@ -150,4 +150,4 @@ module = "transformers.*"
 ignore_missing_imports = true
 
 [tool.pydocstyle]
-ignore= ["D101", "D103", "D102", "D200", "D205", "D400"]
+ignore = "D100,D101,D102,D103,D104,D107,D200,D202,D203,D205,D212,D301,D400,D401,D404,D406,D407,D411,D413,D415,D416,D417"

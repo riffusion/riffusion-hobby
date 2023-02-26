@@ -244,7 +244,7 @@ def get_prompt_inputs(
     return p
 
 
-@st.cache_data
+@st.experimental_memo
 def run_interpolation(
     inputs: InferenceInput, init_image: Image.Image, device: str = "cuda", extension: str = "mp3"
 ) -> T.Tuple[Image.Image, io.BytesIO]:

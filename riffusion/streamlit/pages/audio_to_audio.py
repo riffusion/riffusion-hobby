@@ -267,7 +267,7 @@ def render_audio_to_audio() -> None:
                 guidance_scale=guidance,
                 negative_prompt=prompt_input_a.negative_prompt,
                 seed=prompt_input_a.seed,
-                _progress_callback=progress_callback,
+                progress_callback=progress_callback,
                 device=device,
                 scheduler=scheduler,
             )
