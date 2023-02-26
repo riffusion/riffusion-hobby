@@ -1,4 +1,3 @@
-"""Streamlit page for interpolation between prompts."""
 import dataclasses
 import io
 import typing as T
@@ -14,7 +13,7 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_interpolation() -> None:  # noqa: D103
+def render_interpolation() -> None:
     st.set_page_config(layout="wide", page_icon="🎸")
 
     st.subheader(":performing_arts: Interpolation")
@@ -211,7 +210,9 @@ def get_prompt_inputs(
     cols: bool = False,
     denoising_default: float = 0.5,
 ) -> T.Dict[str, T.Any]:
-    """Compute prompt inputs from widgets."""
+    """
+    Compute prompt inputs from widgets.
+    """
     p: T.Dict[str, T.Any] = {}
 
     # Optionally use columns
@@ -247,7 +248,9 @@ def get_prompt_inputs(
 def run_interpolation(
     inputs: InferenceInput, init_image: Image.Image, device: str = "cuda", extension: str = "mp3"
 ) -> T.Tuple[Image.Image, io.BytesIO]:
-    """Run riffusion interpolation."""
+    """
+    Cached function for riffusion interpolation.
+    """
     pipeline = streamlit_util.load_riffusion_checkpoint(
         device=device,
         # No trace so we can have variable width

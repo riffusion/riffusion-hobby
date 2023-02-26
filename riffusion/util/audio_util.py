@@ -1,4 +1,6 @@
-"""Audio utility functions."""
+"""
+Audio utility functions.
+"""
 
 import io
 import typing as T
@@ -11,7 +13,8 @@ from scipy.io import wavfile
 def audio_from_waveform(
     samples: np.ndarray, sample_rate: int, normalize: bool = False
 ) -> pydub.AudioSegment:
-    """Convert a numpy array of samples of a waveform to an audio segment.
+    """
+    Convert a numpy array of samples of a waveform to an audio segment.
 
     Args
     ----
@@ -35,9 +38,9 @@ def audio_from_waveform(
 
 
 def apply_filters(segment: pydub.AudioSegment, compression: bool = False) -> pydub.AudioSegment:
-    """Apply post-processing filters to the audio segment.
-
-    Compress it and keep at a -10 dBFS level.
+    """
+    Apply post-processing filters to the audio segment to compress it and
+    keep at a -10 dBFS level.
     """
     # TODO(hayk): Come up with a principled strategy for these filters and experiment end-to-end.
     # TODO(hayk): Is this going to make audio unbalanced between sequential clips?
@@ -73,7 +76,9 @@ def apply_filters(segment: pydub.AudioSegment, compression: bool = False) -> pyd
 def stitch_segments(
     segments: T.Sequence[pydub.AudioSegment], crossfade_s: float
 ) -> pydub.AudioSegment:
-    """Stitch together a sequence of audio segments with a crossfade between each segment."""
+    """
+    Stitch together a sequence of audio segments with a crossfade between each segment.
+    """
     crossfade_ms = int(crossfade_s * 1000)
     combined_segment = segments[0]
     for segment in segments[1:]:
@@ -82,7 +87,9 @@ def stitch_segments(
 
 
 def overlay_segments(segments: T.Sequence[pydub.AudioSegment]) -> T.Optional[pydub.AudioSegment]:
-    """Overlay a sequence of audio segments on top of each other."""
+    """
+    Overlay a sequence of audio segments on top of each other.
+    """
     assert len(segments) > 0, "Must have at least one segment to overlay"  # nosec: B101
     output: T.Optional[pydub.AudioSegment] = None
     for segment in segments:

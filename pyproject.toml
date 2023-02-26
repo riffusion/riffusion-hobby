@@ -148,3 +148,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "transformers.*"
 ignore_missing_imports = true
+
+[tool.pydocstyle]
+ignore= ["D101", "D103", "D102", "D200", "D205", "D400"]

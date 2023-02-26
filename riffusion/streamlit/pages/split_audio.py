@@ -1,4 +1,3 @@
-"""Streamlit page for splitting audio into clips."""
 import typing as T
 from pathlib import Path
 
@@ -10,7 +9,7 @@ from riffusion.streamlit import util as streamlit_util
 from riffusion.util import audio_util
 
 
-def render_split_audio() -> None:  # noqa: D103
+def render_split_audio() -> None:
     st.set_page_config(layout="wide", page_icon="🎸")
 
     st.subheader(":scissors: Audio Splitter")
@@ -102,7 +101,7 @@ def render_split_audio() -> None:  # noqa: D103
 @st.cache
 def split_audio_cached(
     segment: pydub.AudioSegment, device: str = "cuda"
-) -> T.Dict[str, pydub.AudioSegment]:  # noqa: D103
+) -> T.Dict[str, pydub.AudioSegment]:
     return split_audio(segment, device=device)
 
 

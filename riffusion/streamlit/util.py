@@ -1,4 +1,6 @@
-"""Streamlit utilities (mostly cached wrappers around riffusion code)."""
+"""
+Streamlit utilities (mostly cached wrappers around riffusion code).
+"""
 import io
 import threading
 import typing as T
@@ -37,7 +39,9 @@ def load_riffusion_checkpoint(
     no_traced_unet: bool = False,
     device: str = "cuda",
 ) -> RiffusionPipeline:
-    """Load the riffusion pipeline."""
+    """
+    Load the riffusion pipeline.
+    """
     return RiffusionPipeline.load_checkpoint(
         checkpoint=checkpoint,
         use_traced_unet=not no_traced_unet,
@@ -74,7 +78,9 @@ def load_stable_diffusion_pipeline(
 
 
 def get_scheduler(scheduler: str, config: T.Any) -> T.Any:
-    """Construct a denoising scheduler from a string."""
+    """
+    Construct a denoising scheduler from a string.
+    """
     if scheduler == "PNDMScheduler":
         from diffusers import PNDMScheduler
 
@@ -105,7 +111,9 @@ def get_scheduler(scheduler: str, config: T.Any) -> T.Any:
 
 @st.cache_resource
 def pipeline_lock() -> threading.Lock:
-    """Singleton lock used to prevent concurrent access to any model pipeline."""
+    """
+    Singleton lock used to prevent concurrent access to any model pipeline.
+    """
     return threading.Lock()
 
 
@@ -116,7 +124,8 @@ def load_stable_diffusion_img2img_pipeline(
     dtype: torch.dtype = torch.float16,
     scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> StableDiffusionImg2ImgPipeline:
-    """Load the image to image pipeline.
+    """
+    Load the image to image pipeline.
 
     TODO(hayk): Merge this into RiffusionPipeline to just load one model.
     """
@@ -149,7 +158,9 @@ def run_txt2img(
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
 ) -> Image.Image:
-    """Run the text to image pipeline with caching."""
+    """
+    Run the text to image pipeline with caching.
+    """
     with pipeline_lock():
         pipeline = load_stable_diffusion_pipeline(
             checkpoint=checkpoint,
@@ -177,7 +188,7 @@ def run_txt2img(
 def spectrogram_image_converter(
     params: SpectrogramParams,
     device: str = "cuda",
-) -> SpectrogramImageConverter:  # noqa: D103
+) -> SpectrogramImageConverter:
     return SpectrogramImageConverter(params=params, device=device)
 
 
@@ -186,9 +197,9 @@ def spectrogram_image_from_audio(
     segment: pydub.AudioSegment,
     params: SpectrogramParams,
     device: str = "cuda",
-) -> Image.Image:  # noqa: D103
+) -> Image.Image:
     converter = spectrogram_image_converter(params=params, device=device)
-    return converter.spectrogram_image_from_audio(segment)
+    return converter.spectrogram_image_from_audio(_segment)
 
 
 @st.cache_data
@@ -196,7 +207,7 @@ def audio_segment_from_spectrogram_image(
     image: Image.Image,
     params: SpectrogramParams,
     device: str = "cuda",
-) -> pydub.AudioSegment:  # noqa: D103
+) -> pydub.AudioSegment:
     converter = spectrogram_image_converter(params=params, device=device)
     return converter.audio_from_spectrogram_image(image)
 
@@ -207,7 +218,7 @@ def audio_bytes_from_spectrogram_image(
     params: SpectrogramParams,
     device: str = "cuda",
     output_format: str = "mp3",
-) -> io.BytesIO:  # noqa: D103
+) -> io.BytesIO:
     segment = audio_segment_from_spectrogram_image(image=image, params=params, device=device)
 
     audio_bytes = io.BytesIO()
@@ -217,7 +228,9 @@ def audio_bytes_from_spectrogram_image(
 
 
 def select_device(container: T.Any = st.sidebar) -> str:
-    """Dropdown to select a torch device, with an intelligent default."""
+    """
+    Dropdown to select a torch device, with an intelligent default.
+    """
     default_device = "cpu"
     if torch.cuda.is_available():
         default_device = "cuda"
@@ -237,7 +250,9 @@ def select_device(container: T.Any = st.sidebar) -> str:
 
 
 def select_audio_extension(container: T.Any = st.sidebar) -> str:
-    """Dropdown to select an audio extension, with an intelligent default."""
+    """
+    Dropdown to select an audio extension, with an intelligent default.
+    """
     default = "mp3" if pydub.AudioSegment.ffmpeg else "wav"  # type: ignore
     extension = container.selectbox(
         "Output format",
@@ -249,7 +264,9 @@ def select_audio_extension(container: T.Any = st.sidebar) -> str:
 
 
 def select_scheduler(container: T.Any = st.sidebar) -> str:
-    """Dropdown to select a scheduler."""
+    """
+    Dropdown to select a scheduler.
+    """
     scheduler = st.sidebar.selectbox(
         "Scheduler",
         options=SCHEDULER_OPTIONS,
@@ -261,7 +278,9 @@ def select_scheduler(container: T.Any = st.sidebar) -> str:
 
 
 def select_checkpoint(container: T.Any = st.sidebar) -> str:
-    """Provide a custom model checkpoint."""
+    """
+    Provide a custom model checkpoint.
+    """
     custom_checkpoint = container.text_input(
         "Custom Checkpoint",
         value="",
@@ -271,12 +290,12 @@ def select_checkpoint(container: T.Any = st.sidebar) -> str:
 
 
 @st.cache_data
-def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:  # noqa: D103
+def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
     return pydub.AudioSegment.from_file(audio_file)  # type: ignore
 
 
 @st.cache_resource
-def get_audio_splitter(device: str = "cuda"):  # noqa: D103
+def get_audio_splitter(device: str = "cuda"):
     return AudioSplitter(device=device)
 
 
@@ -285,7 +304,7 @@ def load_magic_mix_pipeline(
     checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
-):  # noqa: D103
+):
     pipeline = DiffusionPipeline.from_pretrained(
         checkpoint,
         custom_pipeline="magic_mix",
@@ -310,7 +329,9 @@ def run_img2img_magic_mix(
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
 ):
-    """Run the magic mix pipeline for img2img."""
+    """
+    Run the magic mix pipeline for img2img.
+    """
     with pipeline_lock():
         pipeline = load_magic_mix_pipeline(
             checkpoint=checkpoint,
@@ -343,7 +364,7 @@ def run_img2img(
     device: str = "cuda",
     scheduler: str = SCHEDULER_OPTIONS[0],
     progress_callback: T.Optional[T.Callable[[float], T.Any]] = None,
-) -> Image.Image:  # noqa: D103
+) -> Image.Image:
     with pipeline_lock():
         pipeline = load_stable_diffusion_img2img_pipeline(
             checkpoint=checkpoint,
@@ -377,18 +398,20 @@ def run_img2img(
 
 
 class StreamlitCounter:
-    """Simple counter stored in streamlit session state."""
+    """
+    Simple counter stored in streamlit session state.
+    """
 
     def __init__(self, key="_counter"):
         self.key = key
         if not st.session_state.get(self.key):
             st.session_state[self.key] = 0
 
-    def increment(self):  # noqa: D102
+    def increment(self):
         st.session_state[self.key] += 1
 
     @property
-    def value(self):  # noqa: D102
+    def value(self):
         return st.session_state[self.key]
 
 
@@ -397,9 +420,9 @@ def display_and_download_audio(
     name: str,
     extension: str = "mp3",
 ) -> None:
-    """Display the given audio segment and provide a button to download it.
-
-    This includes a proper file name, since st.audio doesn't support that.
+    """
+    Display the given audio segment and provide a button to download it with
+    a proper file name, since st.audio doesn't support that.
     """
     mime_type = f"audio/{extension}"
     audio_bytes = io.BytesIO()

@@ -1,4 +1,6 @@
-"""Flask server that serves the riffusion model as an API."""
+"""
+Flask server that serves the riffusion model as an API.
+"""
 
 import dataclasses
 import io
@@ -45,7 +47,9 @@ def run_app(
     ssl_certificate: T.Optional[str] = None,
     ssl_key: T.Optional[str] = None,
 ):
-    """Run a flask API that serves the given riffusion model checkpoint."""
+    """
+    Run a flask API that serves the given riffusion model checkpoint.
+    """
     # Initialize the model
     global PIPELINE  # pylint: disable=global-statement
     PIPELINE = RiffusionPipeline.load_checkpoint(
@@ -70,13 +74,13 @@ def run_app(
 
 @app.route("/run_inference/", methods=["POST"])
 def run_inference():
-    """Execute the riffusion model as an API.
+    """
+    Execute the riffusion model as an API.
 
-    Inputs
-    ------
+    Inputs:
         Serialized JSON of the InferenceInput dataclass
 
-    Returns
+    Returns:
     -------
         Serialized JSON of the InferenceOutput dataclass
     """
@@ -115,10 +119,10 @@ def compute_request(
     pipeline: RiffusionPipeline,
     seed_images_dir: str,
 ) -> T.Union[str, T.Tuple[str, int]]:
-    """Do all the heavy lifting of the request.
+    """
+    Does all the heavy lifting of the request.
 
-    Args
-    ----
+    Args:
         inputs: The input dataclass
         pipeline: The riffusion model pipeline
         seed_images_dir: The directory where seed images are stored

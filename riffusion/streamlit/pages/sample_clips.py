@@ -1,4 +1,3 @@
-"""Streamlit page for sampling clips from an audio file."""
 import tempfile
 import typing as T
 from pathlib import Path
@@ -11,7 +10,7 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_sample_clips() -> None:  # noqa: D103
+def render_sample_clips() -> None:
     st.set_page_config(layout="wide", page_icon="🎸")
 
     st.subheader(":paperclip: Sample Clips")

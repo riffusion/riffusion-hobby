@@ -1,4 +1,3 @@
-"""Streamlit page for audio to audio inference."""
 import io
 import typing as T
 from pathlib import Path
@@ -15,7 +14,7 @@ from riffusion.streamlit.pages.interpolation import get_prompt_inputs, run_inter
 from riffusion.util import audio_util
 
 
-def render_audio_to_audio() -> None:  # noqa: D103
+def render_audio_to_audio() -> None:
     st.set_page_config(layout="wide", page_icon="🎸")
 
     st.subheader(":wave: Audio to Audio")
@@ -268,7 +267,7 @@ def render_audio_to_audio() -> None:  # noqa: D103
                 guidance_scale=guidance,
                 negative_prompt=prompt_input_a.negative_prompt,
                 seed=prompt_input_a.seed,
-                progress_callback=progress_callback,
+                _progress_callback=progress_callback,
                 device=device,
                 scheduler=scheduler,
             )
@@ -321,7 +320,9 @@ def render_audio_to_audio() -> None:  # noqa: D103
 
 
 def get_clip_params(advanced: bool = False) -> T.Dict[str, T.Any]:
-    """Render the parameters of slicing audio into clips."""
+    """
+    Render the parameters of slicing audio into clips.
+    """
     p: T.Dict[str, T.Any] = {}
 
     cols = st.columns(4)
@@ -363,7 +364,9 @@ def get_clip_params(advanced: bool = False) -> T.Dict[str, T.Any]:
 def write_clip_details(
     clip_start_times: np.ndarray, clip_duration_s: float, overlap_duration_s: float
 ):
-    """Write details of the clips to be sliced from an audio segment."""
+    """
+    Write details of the clips to be sliced from an audio segment.
+    """
     clip_details_text = (
         f"Slicing {len(clip_start_times)} clips of duration {clip_duration_s}s "
         f"with overlap {overlap_duration_s}s"
@@ -382,7 +385,9 @@ def write_clip_details(
 def slice_audio_into_clips(
     segment: pydub.AudioSegment, clip_start_times: T.Sequence[float], clip_duration_s: float
 ) -> T.List[pydub.AudioSegment]:
-    """Slice an audio segment into a list of clips of a given duration at the given start times."""
+    """
+    Slice an audio segment into a list of clips of a given duration at the given start times.
+    """
     clip_segments: T.List[pydub.AudioSegment] = []
     for i, clip_start_time_s in enumerate(clip_start_times):
         clip_start_time_ms = int(clip_start_time_s * 1000)
@@ -403,7 +408,9 @@ def slice_audio_into_clips(
 
 
 def scale_image_to_32_stride(image: Image.Image) -> Image.Image:
-    """Scale an image to a size that is a multiple of 32."""
+    """
+    Scale an image to a size that is a multiple of 32.
+    """
     closest_width = int(np.ceil(image.width / 32) * 32)
     closest_height = int(np.ceil(image.height / 32) * 32)
     return image.resize((closest_width, closest_height), Image.BICUBIC)

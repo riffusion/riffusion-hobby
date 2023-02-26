@@ -6,7 +6,6 @@ from streamlit.web import cli as streamlit_cli
 
 
 def main():
-    """Launch app."""
     sys.argv = [
         "streamlit",
         "run",
