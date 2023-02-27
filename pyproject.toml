@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "riffusion"
-version = "0.0.4"
+version = "0.0.5"
 description = "Stable diffusion for real-time music generation."
 license = "MIT"
 authors = [
