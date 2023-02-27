@@ -35,9 +35,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install pip packages from dev_requirements.txt
+      - name: Install pip packages from requirements-dev.txt
         run: |
-          pip install -r dev_requirements.txt
+          pip install -r requirements-dev.txt
 
       - name: Test with unittest
         run: |

@@ -1,0 +1,36 @@
+# Riffusion project streamlit configuration file
+
+[global]
+disableWatchdogWarning = false
+showWarningOnDirectExecution = true
+
+[client]
+caching = true
+displayEnabled = true
+
+
+[runner]
+magicEnabled = true
+installTracer = false
+fixMatplotlib = true
+
+
+[server]
+folderWatchBlacklist = []
+headless = true
+runOnSave = true
+port = 8501
+enableCORS = true
+
+
+[browser]
+serverAddress = "127.0.0.1"
+gatherUsageStats = false
+serverPort = 8501
+
+
+[logger]
+level = "info"
+
+[ui]
+hideTopBar = false

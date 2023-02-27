@@ -16,7 +16,8 @@ def audio_from_waveform(
     """
     Convert a numpy array of samples of a waveform to an audio segment.
 
-    Args:
+    Args
+    ----
         samples: (channels, samples) array
     """
     # Normalize volume to fit in int16
@@ -33,7 +34,7 @@ def audio_from_waveform(
     wav_bytes.seek(0)
 
     # Read into pydub
-    return pydub.AudioSegment.from_wav(wav_bytes)
+    return pydub.AudioSegment.from_wav(wav_bytes)  # type: ignore
 
 
 def apply_filters(segment: pydub.AudioSegment, compression: bool = False) -> pydub.AudioSegment:
@@ -85,12 +86,12 @@ def stitch_segments(
     return combined_segment
 
 
-def overlay_segments(segments: T.Sequence[pydub.AudioSegment]) -> pydub.AudioSegment:
+def overlay_segments(segments: T.Sequence[pydub.AudioSegment]) -> T.Optional[pydub.AudioSegment]:
     """
     Overlay a sequence of audio segments on top of each other.
     """
-    assert len(segments) > 0
-    output: pydub.AudioSegment = None
+    assert len(segments) > 0, "Must have at least one segment to overlay"  # nosec: B101
+    output: T.Optional[pydub.AudioSegment] = None
     for segment in segments:
         if output is None:
             output = segment

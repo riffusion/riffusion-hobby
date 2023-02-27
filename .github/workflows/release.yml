@@ -1,0 +1,59 @@
+
+---
+name: 🕊️ Release Workflow
+
+on:
+  workflow_dispatch:
+
+env:
+  ALLOWED_PUBLISHERS: "${{ github.actor == 'hmartiro' || github.actor == 'SethForsgren' }}"
+  STABLE_PYTHON_VERSION: '3.9'
+  PYTHONUNBUFFERED: "1"
+  FORCE_COLOR: "1"
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  release-workflow:
+    name: 🏹 Release Workflow
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 10
+
+    steps:
+      - name: 📩 Checkout the source w/ full depth(for tags and SCM)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python ${{ env.STABLE_PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.STABLE_PYTHON_VERSION }}
+
+      - name: 🧱 Build wheel
+        run: |
+          pip install poetry
+          poetry install
+          poetry build
+
+      - name: 🐦 Release wheel
+        if: ${{ env.ALLOWED_PUBLISHERS && !failure() }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ SECRETS.PYPI_TOKEN }}
+          packages_dir: dist
+          verbose: true
+
+      - name: 📁 Archiving Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ !failure() }}
+        continue-on-error: true
+        with:
+          name: build-artifacts
+          retention-days: 1
+          path: |
+            dist

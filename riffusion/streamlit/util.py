@@ -222,7 +222,7 @@ def audio_bytes_from_spectrogram_image(
     segment = audio_segment_from_spectrogram_image(image=image, params=params, device=device)
 
     audio_bytes = io.BytesIO()
-    segment.export(audio_bytes, format=output_format)
+    segment.export(audio_bytes, format=output_format)  # type: ignore
 
     return audio_bytes
 
@@ -244,7 +244,7 @@ def select_device(container: T.Any = st.sidebar) -> str:
         index=device_options.index(default_device),
         help="Which compute device to use. CUDA is recommended.",
     )
-    assert device is not None
+    assert device is not None, "Device must be selected"  # nosec: B101
 
     return device
 
@@ -253,13 +253,13 @@ def select_audio_extension(container: T.Any = st.sidebar) -> str:
     """
     Dropdown to select an audio extension, with an intelligent default.
     """
-    default = "mp3" if pydub.AudioSegment.ffmpeg else "wav"
+    default = "mp3" if pydub.AudioSegment.ffmpeg else "wav"  # type: ignore
     extension = container.selectbox(
         "Output format",
         options=AUDIO_EXTENSIONS,
         index=AUDIO_EXTENSIONS.index(default),
     )
-    assert extension is not None
+    assert extension is not None, "Extension must be selected"  # nosec: B101
     return extension
 
 
@@ -273,7 +273,7 @@ def select_scheduler(container: T.Any = st.sidebar) -> str:
         index=0,
         help="Which diffusion scheduler to use",
     )
-    assert scheduler is not None
+    assert scheduler is not None, "Scheduler must be selected"  # nosec: B101
     return scheduler
 
 
@@ -291,7 +291,7 @@ def select_checkpoint(container: T.Any = st.sidebar) -> str:
 
 @st.experimental_memo
 def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
-    return pydub.AudioSegment.from_file(audio_file)
+    return pydub.AudioSegment.from_file(audio_file)  # type: ignore
 
 
 @st.experimental_singleton
@@ -426,7 +426,7 @@ def display_and_download_audio(
     """
     mime_type = f"audio/{extension}"
     audio_bytes = io.BytesIO()
-    segment.export(audio_bytes, format=extension)
+    segment.export(audio_bytes, format=extension)  # type: ignore
     st.audio(audio_bytes, format=mime_type)
 
     st.download_button(

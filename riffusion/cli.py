@@ -123,7 +123,7 @@ def sample_clips(
     segment_duration_ms = int(segment.duration_seconds * 1000)
     for i in range(num_clips):
         clip_start_ms = np.random.randint(0, segment_duration_ms - duration_ms)
-        clip = segment[clip_start_ms : clip_start_ms + duration_ms]
+        clip = segment[clip_start_ms : clip_start_ms + duration_ms]  # noqa: E203
 
         clip_name = f"clip_{i}_start_{clip_start_ms}_ms_duration_{duration_ms}_ms.{extension}"
         clip_path = output_dir_path / clip_name
@@ -251,7 +251,7 @@ def sample_clips_batch(
             except ValueError:
                 continue
 
-            clip = segment[clip_start_ms : clip_start_ms + duration_ms]
+            clip = segment[clip_start_ms : clip_start_ms + duration_ms]  # noqa: E203
 
             clip_name = (
                 f"{audio_path.stem}_{i}_"
@@ -265,7 +265,7 @@ def sample_clips_batch(
             pbar.update()
 
 
-if __name__ == "__main__":
+def main():
     argh.dispatch_commands(
         [
             audio_to_image,
@@ -276,3 +276,7 @@ if __name__ == "__main__":
             sample_clips_batch,
         ]
     )
+
+
+if __name__ == "__main__":
+    main()

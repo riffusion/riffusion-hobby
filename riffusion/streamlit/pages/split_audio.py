@@ -40,7 +40,7 @@ def render_split_audio() -> None:
         options=extension_options,
         index=extension_options.index("mp3"),
     )
-    assert extension is not None
+    assert extension is not None, "Extension should not be None"  # nosec: B101
 
     audio_file = st.file_uploader(
         "Upload audio",
@@ -91,7 +91,11 @@ def render_split_audio() -> None:
         # Display
         st.write(f"#### Recombined: {', '.join(recombine)}")
         output_name = f"{input_name}_{'_'.join(recombine_lower)}"
-        streamlit_util.display_and_download_audio(recombined, output_name, extension=extension)
+        streamlit_util.display_and_download_audio(
+            recombined,  # type: ignore
+            output_name,
+            extension=extension,
+        )
 
 
 @st.cache

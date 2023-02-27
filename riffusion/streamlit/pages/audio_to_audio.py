@@ -68,7 +68,7 @@ def render_audio_to_audio() -> None:
             index=0,
             help="Which diffusion scheduler to use",
         )
-        assert scheduler is not None
+        assert scheduler is not None, "Scheduler must be set"  # nosec: B101
 
     audio_file = st.file_uploader(
         "Upload audio",
@@ -199,7 +199,7 @@ def render_audio_to_audio() -> None:
         st.write(f"### Clip {i} at {clip_start_times[i]:.2f}s")
 
         audio_bytes = io.BytesIO()
-        clip_segment.export(audio_bytes, format="wav")
+        clip_segment.export(audio_bytes, format="wav")  # type: ignore
 
         init_image = streamlit_util.spectrogram_image_from_audio(
             clip_segment,
@@ -226,7 +226,9 @@ def render_audio_to_audio() -> None:
                 progress_callback = progress.progress
 
         if interpolate:
-            assert use_magic_mix is False, "Cannot use magic mix and interpolate together"
+            assert (  # nosec: B101
+                use_magic_mix is False
+            ), "Cannot use magic mix and interpolate together"
             inputs = InferenceInput(
                 alpha=float(alphas[i]),
                 num_inference_steps=num_inference_steps,
@@ -241,7 +243,9 @@ def render_audio_to_audio() -> None:
                 device=device,
             )
         elif use_magic_mix:
-            assert not prompt_input_a.negative_prompt, "No negative prompt with magic mix"
+            assert (  # nosec: B101
+                not prompt_input_a.negative_prompt
+            ), "No negative prompt with magic mix"
             image = streamlit_util.run_img2img_magic_mix(
                 prompt=prompt_input_a.prompt,
                 init_image=init_image_resized,
@@ -285,7 +289,7 @@ def render_audio_to_audio() -> None:
         result_segments.append(riffed_segment)
 
         audio_bytes = io.BytesIO()
-        riffed_segment.export(audio_bytes, format="wav")
+        riffed_segment.export(audio_bytes, format="wav")  # type: ignore
 
         if show_clip_details:
             right.audio(audio_bytes)
@@ -302,7 +306,7 @@ def render_audio_to_audio() -> None:
             )
 
             audio_bytes = io.BytesIO()
-            diff_segment.export(audio_bytes, format=extension)
+            diff_segment.export(audio_bytes, format=extension)  # type: ignore
             st.audio(audio_bytes)
 
     # Combine clips with a crossfade based on overlap
@@ -388,7 +392,9 @@ def slice_audio_into_clips(
     for i, clip_start_time_s in enumerate(clip_start_times):
         clip_start_time_ms = int(clip_start_time_s * 1000)
         clip_duration_ms = int(clip_duration_s * 1000)
-        clip_segment = segment[clip_start_time_ms : clip_start_time_ms + clip_duration_ms]
+        clip_segment = segment[
+            clip_start_time_ms : clip_start_time_ms + clip_duration_ms  # noqa: E203
+        ]
 
         # TODO(hayk): I don't think this is working properly
         if i == len(clip_start_times) - 1:

@@ -75,7 +75,7 @@ def render_interpolation() -> None:
         index=0,
         help="Which seed image to use for img2img. Custom allows uploading your own.",
     )
-    assert init_image_name is not None
+    assert init_image_name is not None, "init_image_name should not be None"  # nosec: B101
     if init_image_name == "custom":
         init_image_file = st.sidebar.file_uploader(
             "Upload a custom seed image",
@@ -177,7 +177,10 @@ def render_interpolation() -> None:
     st.write("#### Final Output")
 
     # TODO(hayk): Concatenate with overlap and better blending like in audio to audio
-    audio_segments = [pydub.AudioSegment.from_file(audio_bytes) for audio_bytes in audio_bytes_list]
+    audio_segments = [
+        pydub.AudioSegment.from_file(audio_bytes)  # type: ignore
+        for audio_bytes in audio_bytes_list
+    ]
     concat_segment = audio_segments[0]
     for segment in audio_segments[1:]:
         concat_segment = concat_segment.append(segment, crossfade=0)
