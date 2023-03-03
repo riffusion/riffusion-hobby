@@ -17,7 +17,7 @@ with open("../audiocaps_train/metadata.jsonl", 'w') as f:
 
         jsonline = {
             "file_name": file_name,
-            "caption": row['caption'],
+            "text": row['caption'],
         }
 
         f.write( json.dumps(jsonline) + "\n" )
