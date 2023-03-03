@@ -22,3 +22,6 @@ with open("../audiocaps_train/metadata.jsonl", 'w') as f:
 
         f.write( json.dumps(jsonline) + "\n" )
 
+
+# todo prepare spectrogram dataset
+# ~/anaconda3_new/envs/riffusion/bin/python3.9 -m riffusion.cli audio-to-image --audio ../audiocaps_train/000AjsqXq54.wav --image ./000AjsqXq54.jpg
