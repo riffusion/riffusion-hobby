@@ -1,3 +1,14 @@
+
+# Audio DALLE2
+
+# To run training
+```
+export PYTHON_PATH=.:/data_new/d.tarasov/workspace/hse/phd/diffusers
+~/anaconda3_new/envs/riffusion/bin/python ./train_text_to_image.py --pretrained_model_name_or_path=riffusion/riffusion-model-v1 --train_data_dir=../audiocaps_train_spectrograms/
+```
+
+----
+
 # :guitar: Riffusion
 
 <a href="https://github.com/riffusion/riffusion/actions/workflows/ci.yml?query=branch%3Amain"><img alt="CI status" src="https://github.com/riffusion/riffusion/actions/workflows/ci.yml/badge.svg" /></a>

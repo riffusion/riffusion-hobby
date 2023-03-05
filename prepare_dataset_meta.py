@@ -22,6 +22,7 @@ args = parser.parse_args()
 
 dataset = pd.read_csv("../audiocaps/dataset/train.csv")
 
+audio_dir = "../audiocaps_train/"
 spectrogram_dir = '../audiocaps_train_spectrograms/'
 if not os.path.isdir(spectrogram_dir):
     os.mkdir(spectrogram_dir)
@@ -29,18 +30,27 @@ if not os.path.isdir(spectrogram_dir):
 # prepare spectrogram
 
 def process_dataset_idx(i):
-    row = dataset.iloc[i]
+    try:
+        row = dataset.iloc[i]
 
-    file_name = row['youtube_id'] + '.wav'
-    spectrogram_file_name = row['youtube_id'] + '.jpg'
-    full_path_audio = "../audiocaps_train/" + file_name
+        audio_files = set(os.listdir(audio_dir))
+        spectrogram_files = set(os.listdir(spectrogram_dir))
 
-    if not os.path.isfile(full_path_audio):
-        return
+        file_name = row['youtube_id'] + '.wav'
+        spectrogram_file_name = row['youtube_id'] + '.jpg'
+        full_path_audio = audio_dir + file_name
 
-    fill_path_spectrogram = spectrogram_dir + spectrogram_file_name
+        if spectrogram_file_name in spectrogram_files:
+            return
 
-    riffusioncli.audio_to_image(audio=full_path_audio, image=fill_path_spectrogram)
+        if file_name not in audio_files:
+            return
+
+        fill_path_spectrogram = spectrogram_dir + spectrogram_file_name
+
+        riffusioncli.audio_to_image(audio=full_path_audio, image=fill_path_spectrogram)
+    except Exception as e:
+        print("cant process", i, "exception", e)
 
     return
 
@@ -64,13 +74,16 @@ if args.prepare_metadata:
             file_name = row['youtube_id'] + '.wav'
             spectrogram_file_name = row['youtube_id'] + '.jpg'
             full_path_audio = "../audiocaps_train/" + file_name
-            fill_path_spectrogram = spectrogram_dir + spectrogram_file_name
+            full_path_spectrogram = spectrogram_dir + spectrogram_file_name
 
             if not os.path.isfile(full_path_audio):
                 continue
 
+            if not os.path.isfile(full_path_spectrogram):
+                continue
+
             jsonline = {
-                "file_name": fill_path_spectrogram,
+                "file_name": full_path_spectrogram,
                 "text": row['caption'],
             }
 
