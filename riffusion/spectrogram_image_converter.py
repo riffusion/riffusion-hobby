@@ -44,7 +44,7 @@ class SpectrogramImageConverter:
                 segment = segment.set_channels(2)
         else:
             if segment.channels > 1:
-                print("WARNING: Stereo audio but stereo=False, setting to mono")
+                # print("WARNING: Stereo audio but stereo=False, setting to mono")
                 segment = segment.set_channels(1)
 
         spectrogram = self.converter.spectrogram_from_audio(segment)

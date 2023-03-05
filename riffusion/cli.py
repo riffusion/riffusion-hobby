@@ -56,7 +56,7 @@ def audio_to_image(
     pil_image = converter.spectrogram_image_from_audio(segment)
 
     pil_image.save(image, exif=pil_image.getexif(), format="PNG")
-    print(f"Wrote {image}")
+    # print(f"Wrote {image}")
 
 
 def print_exif(*, image: str) -> None:
