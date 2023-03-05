@@ -29,12 +29,12 @@ if not os.path.isdir(spectrogram_dir):
 
 # prepare spectrogram
 
+audio_files = set(os.listdir(audio_dir))
+spectrogram_files = set(os.listdir(spectrogram_dir))
+
 def process_dataset_idx(i):
     try:
         row = dataset.iloc[i]
-
-        audio_files = set(os.listdir(audio_dir))
-        spectrogram_files = set(os.listdir(spectrogram_dir))
 
         file_name = row['youtube_id'] + '.wav'
         spectrogram_file_name = row['youtube_id'] + '.jpg'
