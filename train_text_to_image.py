@@ -45,6 +45,7 @@ from diffusers.training_utils import EMAModel
 from diffusers.utils import check_min_version, deprecate
 from diffusers.utils.import_utils import is_xformers_available
 
+from riffusion.riffusion_pipeline import RiffusionPipeline
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.15.0.dev0")
@@ -408,6 +409,12 @@ def main():
     vae.requires_grad_(False)
     text_encoder.requires_grad_(False)
 
+    logger.info("Num text encoder paramerts: %i", sum( p.numel() for p in text_encoder.parameters() ))
+    logger.info("Num vae          paramerts: %i", sum( p.numel() for p in vae.parameters() ))
+    logger.info("Num unet         paramerts: %i", sum( p.numel() for p in unet.parameters() ))
+
+    logger.info("unet:", unet)
+
     # Create EMA for the unet.
     if args.use_ema:
         ema_unet = UNet2DConditionModel.from_pretrained(
@@ -566,10 +573,7 @@ def main():
     train_transforms = transforms.Compose(
         [
             transforms.Resize(args.resolution, interpolation=transforms.InterpolationMode.BILINEAR),
-            transforms.CenterCrop(args.resolution) if args.center_crop else transforms.RandomCrop(args.resolution),
-            transforms.RandomHorizontalFlip() if args.random_flip else transforms.Lambda(lambda x: x),
             transforms.ToTensor(),
-            transforms.Normalize([0.5], [0.5]),
         ]
     )
 

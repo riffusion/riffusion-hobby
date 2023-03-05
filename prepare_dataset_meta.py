@@ -83,7 +83,7 @@ if args.prepare_metadata:
                 continue
 
             jsonline = {
-                "file_name": full_path_spectrogram,
+                "file_name": spectrogram_file_name,
                 "text": row['caption'],
             }
 

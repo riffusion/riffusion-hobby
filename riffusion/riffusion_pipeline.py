@@ -160,7 +160,7 @@ class RiffusionPipeline(DiffusionPipeline):
 
             def __init__(self):
                 super().__init__()
-                self.in_channels = device
+                self.in_channels = in_channels
                 self.device = device
                 self.dtype = dtype
 

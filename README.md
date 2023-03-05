@@ -3,8 +3,8 @@
 
 # To run training
 ```
-export PYTHON_PATH=.:/data_new/d.tarasov/workspace/hse/phd/diffusers
-~/anaconda3_new/envs/riffusion/bin/python ./train_text_to_image.py --pretrained_model_name_or_path=riffusion/riffusion-model-v1 --train_data_dir=../audiocaps_train_spectrograms/
+export PYTHONPATH=.:/data_new/d.tarasov/workspace/hse/phd/diffusers/src
+~/anaconda3_new/envs/riffusion/bin/python ./train_text_to_image.py --pretrained_model_name_or_path=riffusion/riffusion-model-v1 --train_data_dir=../audiocaps_train_spectrograms/ --train_batch_size 1 --gradient_accumulation_steps 1 --mixed_precision fp16 --gradient_checkpointing --enable_xformers_memory_efficient_attention # --use_8bit_adam # 8bit_adam < fails
 ```
 
 ----
