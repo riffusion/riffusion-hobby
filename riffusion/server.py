@@ -15,7 +15,7 @@ import flask
 import PIL
 from flask_cors import CORS
 
-from riffusion.datatypes import InferenceInput, InferenceOutput
+from riffusion.datatypes import InferenceInput, InferenceOutput, RawInferenceOutput
 from riffusion.riffusion_pipeline import RiffusionPipeline
 from riffusion.spectrogram_image_converter import SpectrogramImageConverter
 from riffusion.spectrogram_params import SpectrogramParams
@@ -101,10 +101,12 @@ def run_inference():
         logging.info(json_data)
         return str(exception), 400
 
-    response = compute_request(
-        inputs=inputs,
-        seed_images_dir=SEED_IMAGES_DIR,
-        pipeline=PIPELINE,
+    response = form_response(
+        compute_request(
+            inputs=inputs,
+            seed_images_dir=SEED_IMAGES_DIR,
+            pipeline=PIPELINE,
+        )
     )
 
     # Log the total time
@@ -113,11 +115,26 @@ def run_inference():
     return response
 
 
+def form_response(inference_result: RawInferenceOutput) -> T.Union[str, T.Tuple[str, int]]:
+    """
+    Converts an InferenceOutput to a web usable response
+    """
+
+    # Assemble the output dataclass
+    output = InferenceOutput(
+        image="data:image/jpeg;base64," + base64_util.encode(inference_result.image),
+        audio="data:audio/mpeg;base64," + base64_util.encode(inference_result.audio),
+        duration_s=inference_result.duration_s,
+    )
+
+    return json.dumps(dataclasses.asdict(output))
+
+
 def compute_request(
     inputs: InferenceInput,
     pipeline: RiffusionPipeline,
     seed_images_dir: str,
-) -> T.Union[str, T.Tuple[str, int]]:
+) -> T.Union[RawInferenceOutput, T.Tuple[str, int]]:
     """
     Does all the heavy lifting of the request.
 
@@ -174,13 +191,13 @@ def compute_request(
     image_bytes.seek(0)
 
     # Assemble the output dataclass
-    output = InferenceOutput(
-        image="data:image/jpeg;base64," + base64_util.encode(image_bytes),
-        audio="data:audio/mpeg;base64," + base64_util.encode(mp3_bytes),
+    output = RawInferenceOutput(
+        image=image_bytes,
+        audio=mp3_bytes,
         duration_s=segment.duration_seconds,
     )
 
-    return json.dumps(dataclasses.asdict(output))
+    return output
 
 
 if __name__ == "__main__":

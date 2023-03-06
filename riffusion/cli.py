@@ -13,9 +13,115 @@ import pydub
 import tqdm
 from PIL import Image
 
+from riffusion.datatypes import InferenceInput, PromptInput, RawInferenceOutput
+from riffusion.riffusion_pipeline import RiffusionPipeline
+from riffusion.server import compute_request
 from riffusion.spectrogram_image_converter import SpectrogramImageConverter
 from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.util import image_util
+
+"""
+Where built-in seed images are stored
+
+To use custom seed images, such as for audio to audio, place them in this folder as well.
+Use this cli's audio to image to generate spectrograms from your desired starting audio
+"""
+SEED_IMAGES_DIR = Path(Path(__file__).resolve().parent.parent, "seed_images")
+
+
+@argh.arg("--out", help="The path to place outputs from inference, default is ../../output")
+def inference(*, out: str = "output"):
+    """
+    Interface to run inference request in the cli.
+    """
+
+    # Model to use
+    checkpoint: str = "riffusion/riffusion-model-v1"
+
+    # Initialize the model
+    PIPELINE = RiffusionPipeline.load_checkpoint(
+        checkpoint=checkpoint,
+        use_traced_unet=True,
+        device="cuda",
+    )
+
+    # Output path
+    output_dir_path = Path(Path(__file__).resolve().parent.parent, out)
+    output_dir_path.mkdir(parents=True, exist_ok=True)
+
+    # Why the fuck does python not have a list equivalent to dictget/getattr
+    def get_default(i, default):
+        try:
+            retval = input_array[i].strip()
+            if retval.lower() == "none":
+                return default
+            else:
+                return retval
+        except IndexError:
+            return default
+
+    print("\n")
+    print("Please enter the parameters for inference, comma seperated")
+    print("ctrl-c to quit")
+    print("Everything except starting prompt is optional")
+    print(
+        "Example input: bossa nova with distorted guitar, 674, 0.75, 7, 0, 50, og_beat, None,\
+bossa nova with distorted guitar, 675, 0.75, 7, outputfilenames"
+    )
+    print(
+        "Details in InferenceInput, order is starting PromptInput, modifiers, ending PromptInput,\
+outputfilenames"
+    )
+
+    try:
+        while 1:
+            input_string = input(">>  ")
+            input_array = input_string.split(",")
+
+            startprompt = PromptInput(
+                get_default(0, "Sad trombone noises"),
+                int(get_default(1, 123)),
+                None,
+                float(get_default(2, 0.75)),
+                float(get_default(3, 7.0)),
+            )
+            endprompt = PromptInput(
+                get_default(8, "Sad trombone noises"),
+                int(get_default(9, 123)),
+                None,
+                float(get_default(10, 0.75)),
+                float(get_default(11, 7.0)),
+            )
+            query = InferenceInput(
+                startprompt,
+                endprompt,
+                float(get_default(4, 0)),
+                int(get_default(5, 50)),
+                get_default(6, "og_beat"),
+                get_default(7, None),
+            )
+            outputfilenames = get_default(12, "output")
+
+            results = compute_request(
+                inputs=query,
+                seed_images_dir=str(SEED_IMAGES_DIR),
+                pipeline=PIPELINE,
+            )
+
+            if type(results) == tuple:
+                print(results)
+                raise RuntimeError(f"Couldnt run infference, error {results[0]}")
+            elif type(results) == RawInferenceOutput:
+                with open(Path(output_dir_path, f"{outputfilenames}.jpeg"), "wb") as f:
+                    f.write(results.image.getbuffer())
+                with open(Path(output_dir_path, f"{outputfilenames}.mp3"), "wb") as f:
+                    f.write(results.audio.getbuffer())
+                print(f"Finished, took {results.duration_s} seconds")
+            else:
+                raise RuntimeError("Unexpected output from compute_request")
+
+    except KeyboardInterrupt:
+        print("Goodbye!")
 
 
 @argh.arg("--step-size-ms", help="Duration of one pixel in the X axis of the spectrogram image")
@@ -274,5 +380,6 @@ if __name__ == "__main__":
             print_exif,
             audio_to_images_batch,
             sample_clips_batch,
+            inference,
         ]
     )

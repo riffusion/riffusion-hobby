@@ -139,3 +139,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Output files for cli
+output/

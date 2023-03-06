@@ -3,6 +3,7 @@ Data model for the riffusion API.
 """
 from __future__ import annotations
 
+import io
 import typing as T
 from dataclasses import dataclass
 
@@ -55,6 +56,22 @@ class InferenceInput:
 
     # ID of mask image to use
     mask_image_id: T.Optional[str] = None
+
+
+@dataclass(frozen=True)
+class RawInferenceOutput:
+    """
+    Output of infrence model
+    """
+
+    # Raw JPEG bytes
+    image: io.BytesIO
+
+    # Raw MP3 bytes
+    audio: io.BytesIO
+
+    # The duration of the audio clip
+    duration_s: float
 
 
 @dataclass(frozen=True)
