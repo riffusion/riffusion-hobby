@@ -14,7 +14,7 @@ EXAMPLE_INPUT = """
     "seed": 42,
     "num_inference_steps": 50,
     "guidance": 7.0,
-    "width": 512,
+    "width": 512
   },
   "entries": [
     {
