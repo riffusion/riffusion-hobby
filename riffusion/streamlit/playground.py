@@ -1,4 +1,8 @@
+import sys
+
 import streamlit as st
+import streamlit.web.cli as stcli
+from streamlit import runtime
 
 PAGES = {
     "🎛️ Home": "tasks.home",
@@ -12,7 +16,7 @@ PAGES = {
 }
 
 
-def main() -> None:
+def render() -> None:
     st.set_page_config(
         page_title="Riffusion Playground",
         page_icon="🎸",
@@ -26,4 +30,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    if runtime.exists():
+        render()
+    else:
+        sys.argv = ["streamlit", "run"] + sys.argv
+        sys.exit(stcli.main())
