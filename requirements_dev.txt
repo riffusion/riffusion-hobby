@@ -5,4 +5,5 @@ ruff
 types-Flask-Cors
 types-Pillow
 types-requests
+types-setuptools
 types-tqdm
