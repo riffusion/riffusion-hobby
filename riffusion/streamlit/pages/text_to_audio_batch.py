@@ -13,8 +13,8 @@ EXAMPLE_INPUT = """
   "params": {
     "seed": 42,
     "num_inference_steps": 50,
-    "guidance": 7.0
-    "width": 512,
+    "guidance": 7.0,
+    "width": 512
   },
   "entries": [
     {
