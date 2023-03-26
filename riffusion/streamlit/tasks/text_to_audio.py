@@ -6,10 +6,8 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_text_to_audio() -> None:
-    st.set_page_config(layout="wide", page_icon="🎸")
-
-    st.subheader(":pencil2: Text to Audio")
+def render() -> None:
+    st.subheader("🌊 Text to Audio")
     st.write(
         """
     Generate audio from text prompts.
@@ -119,7 +117,3 @@ def render_text_to_audio() -> None:
         )
 
         seed += 1
-
-
-if __name__ == "__main__":
-    render_text_to_audio()

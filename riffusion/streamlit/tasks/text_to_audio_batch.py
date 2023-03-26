@@ -14,7 +14,7 @@ EXAMPLE_INPUT = """
     "seed": 42,
     "num_inference_steps": 50,
     "guidance": 7.0,
-    "width": 512,
+    "width": 512
   },
   "entries": [
     {
@@ -32,10 +32,8 @@ EXAMPLE_INPUT = """
 """
 
 
-def render_text_to_audio_batch() -> None:
-    st.set_page_config(layout="wide", page_icon="🎸")
-
-    st.subheader(":scroll: Text to Audio Batch")
+def render() -> None:
+    st.subheader("📜 Text to Audio Batch")
     st.write(
         """
     Generate audio in batch from a JSON file of text prompts.
@@ -141,7 +139,3 @@ def render_text_to_audio_batch() -> None:
         st.info(f"Output written to {str(output_path)}")
     else:
         st.info("Enter output directory in sidebar to save to disk")
-
-
-if __name__ == "__main__":
-    render_text_to_audio_batch()

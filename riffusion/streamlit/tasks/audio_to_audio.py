@@ -10,14 +10,12 @@ from PIL import Image
 from riffusion.datatypes import InferenceInput, PromptInput
 from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
-from riffusion.streamlit.pages.interpolation import get_prompt_inputs, run_interpolation
+from riffusion.streamlit.tasks.interpolation import get_prompt_inputs, run_interpolation
 from riffusion.util import audio_util
 
 
-def render_audio_to_audio() -> None:
-    st.set_page_config(layout="wide", page_icon="🎸")
-
-    st.subheader(":wave: Audio to Audio")
+def render() -> None:
+    st.subheader("✨ Audio to Audio")
     st.write(
         """
     Modify existing audio from a text prompt or interpolate between two.
@@ -408,7 +406,3 @@ def scale_image_to_32_stride(image: Image.Image) -> Image.Image:
     closest_width = int(np.ceil(image.width / 32) * 32)
     closest_height = int(np.ceil(image.height / 32) * 32)
     return image.resize((closest_width, closest_height), Image.BICUBIC)
-
-
-if __name__ == "__main__":
-    render_audio_to_audio()
