@@ -1,4 +1,4 @@
-name: Black Format
+name: black format
 
 on:
   push:
