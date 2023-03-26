@@ -67,6 +67,10 @@ module = "diffusers.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+module = "huggingface_hub.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = "numpy.*"
 ignore_missing_imports = true
 
