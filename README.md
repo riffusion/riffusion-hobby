@@ -205,7 +205,7 @@ To run tests using a specific torch device, set `RIFFUSION_TEST_DEVICE`. Tests s
 `cpu`, `cuda`, and `mps` backends.
 
 ## Development Guide
-Install additional packages for dev with `python -m pip install -r dev_requirements.txt`.
+Install additional packages for dev with `python -m pip install -r requirements_dev.txt`.
 
 * Linter: `ruff`
 * Formatter: `black`
