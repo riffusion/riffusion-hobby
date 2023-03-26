@@ -33,7 +33,7 @@ SCHEDULER_OPTIONS = [
 ]
 
 
-@st.experimental_singleton
+@st.cache_resource
 def load_riffusion_checkpoint(
     checkpoint: str = DEFAULT_CHECKPOINT,
     no_traced_unet: bool = False,
@@ -49,7 +49,7 @@ def load_riffusion_checkpoint(
     )
 
 
-@st.experimental_singleton
+@st.cache_resource
 def load_stable_diffusion_pipeline(
     checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
@@ -109,7 +109,7 @@ def get_scheduler(scheduler: str, config: T.Any) -> T.Any:
         raise ValueError(f"Unknown scheduler {scheduler}")
 
 
-@st.experimental_singleton
+@st.cache_resource
 def pipeline_lock() -> threading.Lock:
     """
     Singleton lock used to prevent concurrent access to any model pipeline.
@@ -117,7 +117,7 @@ def pipeline_lock() -> threading.Lock:
     return threading.Lock()
 
 
-@st.experimental_singleton
+@st.cache_resource
 def load_stable_diffusion_img2img_pipeline(
     checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",
@@ -145,7 +145,7 @@ def load_stable_diffusion_img2img_pipeline(
     return pipeline
 
 
-@st.experimental_memo
+@st.cache_data
 def run_txt2img(
     prompt: str,
     num_inference_steps: int,
@@ -184,7 +184,7 @@ def run_txt2img(
         return output["images"][0]
 
 
-@st.experimental_singleton
+@st.cache_resource
 def spectrogram_image_converter(
     params: SpectrogramParams,
     device: str = "cuda",
@@ -202,7 +202,7 @@ def spectrogram_image_from_audio(
     return converter.spectrogram_image_from_audio(segment)
 
 
-@st.experimental_memo
+@st.cache_data
 def audio_segment_from_spectrogram_image(
     image: Image.Image,
     params: SpectrogramParams,
@@ -212,7 +212,7 @@ def audio_segment_from_spectrogram_image(
     return converter.audio_from_spectrogram_image(image)
 
 
-@st.experimental_memo
+@st.cache_data
 def audio_bytes_from_spectrogram_image(
     image: Image.Image,
     params: SpectrogramParams,
@@ -289,17 +289,17 @@ def select_checkpoint(container: T.Any = st.sidebar) -> str:
     return custom_checkpoint or DEFAULT_CHECKPOINT
 
 
-@st.experimental_memo
+@st.cache_data
 def load_audio_file(audio_file: io.BytesIO) -> pydub.AudioSegment:
     return pydub.AudioSegment.from_file(audio_file)
 
 
-@st.experimental_singleton
+@st.cache_resource
 def get_audio_splitter(device: str = "cuda"):
     return AudioSplitter(device=device)
 
 
-@st.experimental_singleton
+@st.cache_resource
 def load_magic_mix_pipeline(
     checkpoint: str = DEFAULT_CHECKPOINT,
     device: str = "cuda",

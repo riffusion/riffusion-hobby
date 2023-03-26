@@ -10,10 +10,8 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_sample_clips() -> None:
-    st.set_page_config(layout="wide", page_icon="🎸")
-
-    st.subheader(":paperclip: Sample Clips")
+def render() -> None:
+    st.subheader("📎 Sample Clips")
     st.write(
         """
     Export short clips from an audio file.
@@ -125,7 +123,3 @@ def render_sample_clips() -> None:
 
     if save_to_disk:
         st.info(f"Wrote {num_clips} clip(s) to `{str(output_path)}`")
-
-
-if __name__ == "__main__":
-    render_sample_clips()

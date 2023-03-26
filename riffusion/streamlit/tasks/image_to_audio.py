@@ -9,10 +9,8 @@ from riffusion.streamlit import util as streamlit_util
 from riffusion.util.image_util import exif_from_image
 
 
-def render_image_to_audio() -> None:
-    st.set_page_config(layout="wide", page_icon="🎸")
-
-    st.subheader(":musical_keyboard: Image to Audio")
+def render() -> None:
+    st.subheader("⏈ Image to Audio")
     st.write(
         """
     Reconstruct audio from spectrogram images.
@@ -77,7 +75,3 @@ def render_image_to_audio() -> None:
         name=Path(image_file.name).stem,
         extension=extension,
     )
-
-
-if __name__ == "__main__":
-    render_image_to_audio()

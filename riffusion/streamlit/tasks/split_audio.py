@@ -9,10 +9,8 @@ from riffusion.streamlit import util as streamlit_util
 from riffusion.util import audio_util
 
 
-def render_split_audio() -> None:
-    st.set_page_config(layout="wide", page_icon="🎸")
-
-    st.subheader(":scissors: Audio Splitter")
+def render() -> None:
+    st.subheader("✂️ Audio Splitter")
     st.write(
         """
     Split audio into individual instrument stems.
@@ -99,7 +97,3 @@ def split_audio_cached(
     segment: pydub.AudioSegment, device: str = "cuda"
 ) -> T.Dict[str, pydub.AudioSegment]:
     return split_audio(segment, device=device)
-
-
-if __name__ == "__main__":
-    render_split_audio()

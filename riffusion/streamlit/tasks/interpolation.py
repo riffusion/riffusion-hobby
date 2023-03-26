@@ -13,10 +13,8 @@ from riffusion.spectrogram_params import SpectrogramParams
 from riffusion.streamlit import util as streamlit_util
 
 
-def render_interpolation() -> None:
-    st.set_page_config(layout="wide", page_icon="🎸")
-
-    st.subheader(":performing_arts: Interpolation")
+def render() -> None:
+    st.subheader("🎭 Interpolation")
     st.write(
         """
     Interpolate between prompts in the latent space.
@@ -241,7 +239,7 @@ def get_prompt_inputs(
     return p
 
 
-@st.experimental_memo
+@st.cache_data
 def run_interpolation(
     inputs: InferenceInput, init_image: Image.Image, device: str = "cuda", extension: str = "mp3"
 ) -> T.Tuple[Image.Image, io.BytesIO]:
@@ -275,7 +273,3 @@ def run_interpolation(
     )
 
     return image, audio_bytes
-
-
-if __name__ == "__main__":
-    render_interpolation()
