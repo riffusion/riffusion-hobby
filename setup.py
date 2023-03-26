@@ -28,6 +28,9 @@ setup(
         "transformers",
     ],
     install_requires=packages,
+    package_data={
+        "riffusion": ["py.typed"],
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
