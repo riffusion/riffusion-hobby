@@ -241,13 +241,18 @@ def get_prompt_inputs(
 
 @st.cache_data
 def run_interpolation(
-    inputs: InferenceInput, init_image: Image.Image, device: str = "cuda", extension: str = "mp3"
+    inputs: InferenceInput,
+    init_image: Image.Image,
+    checkpoint: str = streamlit_util.DEFAULT_CHECKPOINT,
+    device: str = "cuda",
+    extension: str = "mp3",
 ) -> T.Tuple[Image.Image, io.BytesIO]:
     """
     Cached function for riffusion interpolation.
     """
     pipeline = streamlit_util.load_riffusion_checkpoint(
         device=device,
+        checkpoint=checkpoint,
         # No trace so we can have variable width
         no_traced_unet=True,
     )

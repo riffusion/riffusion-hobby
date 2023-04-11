@@ -145,7 +145,7 @@ def load_stable_diffusion_img2img_pipeline(
     return pipeline
 
 
-@st.cache_data
+@st.cache_data(persist=True)
 def run_txt2img(
     prompt: str,
     num_inference_steps: int,
@@ -281,12 +281,11 @@ def select_checkpoint(container: T.Any = st.sidebar) -> str:
     """
     Provide a custom model checkpoint.
     """
-    custom_checkpoint = container.text_input(
+    return container.text_input(
         "Custom Checkpoint",
-        value="",
+        value=DEFAULT_CHECKPOINT,
         help="Provide a custom model checkpoint",
     )
-    return custom_checkpoint or DEFAULT_CHECKPOINT
 
 
 @st.cache_data
