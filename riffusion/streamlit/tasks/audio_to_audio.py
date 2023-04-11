@@ -43,7 +43,9 @@ def render() -> None:
 
     device = streamlit_util.select_device(st.sidebar)
     extension = streamlit_util.select_audio_extension(st.sidebar)
+    checkpoint = streamlit_util.select_checkpoint(st.sidebar)
 
+    use_20k = st.sidebar.checkbox("Use 20kHz", value=False)
     use_magic_mix = st.sidebar.checkbox("Use Magic Mix", False)
 
     with st.sidebar:
@@ -183,7 +185,19 @@ def render() -> None:
 
     st.write(f"## Counter: {counter.value}")
 
-    params = SpectrogramParams()
+    if use_20k:
+        params = SpectrogramParams(
+            min_frequency=10,
+            max_frequency=20000,
+            sample_rate=44100,
+            stereo=True,
+        )
+    else:
+        params = SpectrogramParams(
+            min_frequency=0,
+            max_frequency=10000,
+            stereo=False,
+        )
 
     if interpolate:
         # TODO(hayk): Make not linspace
@@ -237,6 +251,7 @@ def render() -> None:
                 inputs=inputs,
                 init_image=init_image_resized,
                 device=device,
+                checkpoint=checkpoint,
             )
         elif use_magic_mix:
             assert not prompt_input_a.negative_prompt, "No negative prompt with magic mix"
@@ -251,6 +266,7 @@ def render() -> None:
                 mix_factor=magic_mix_mix_factor,
                 device=device,
                 scheduler=scheduler,
+                checkpoint=checkpoint,
             )
         else:
             image = streamlit_util.run_img2img(
@@ -264,6 +280,7 @@ def render() -> None:
                 progress_callback=progress_callback,
                 device=device,
                 scheduler=scheduler,
+                checkpoint=checkpoint,
             )
 
         # Resize back to original size
