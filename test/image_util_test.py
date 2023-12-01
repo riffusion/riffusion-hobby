@@ -47,6 +47,7 @@ class ImageUtilTest(TestCase):
             max_value=max_value,
             power=params.power_for_image,
             stereo=params.stereo,
+            triple_res_mono=params.triple_res_mono,
         )
 
         # Check the shapes

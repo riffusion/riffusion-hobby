@@ -10,7 +10,9 @@ from PIL import Image
 from riffusion.spectrogram_params import SpectrogramParams
 
 
-def image_from_spectrogram(spectrogram: np.ndarray, power: float = 0.25) -> Image.Image:
+def image_from_spectrogram(
+    spectrogram: np.ndarray, power: float = 0.25, triple_res_mono=False
+) -> Image.Image:
     """
     Compute a spectrogram image from a spectrogram magnitude array.
 
@@ -42,8 +44,16 @@ def image_from_spectrogram(spectrogram: np.ndarray, power: float = 0.25) -> Imag
 
     # Munge channels into a PIL image
     if data.shape[0] == 1:
-        # TODO(hayk): Do we want to write single channel to disk instead?
-        image = Image.fromarray(data[0], mode="L").convert("RGB")
+        if triple_res_mono:
+            # Temporarily transpose so that reshaping will order data such that
+            # each RGB pixel will represent 3 consecutive frequency bins along frequency axis
+            data = data.transpose(1, 0, 2)
+            data = data.reshape(data.shape[0] // 3, 3, data.shape[2])
+            data = data.transpose(0, 2, 1)
+            image = Image.fromarray(data, mode="RGB")
+        else:
+            # TODO(hayk): Do we want to write single channel to disk instead?
+            image = Image.fromarray(data[0], mode="L").convert("RGB")
     elif data.shape[0] == 2:
         data = np.array([np.zeros_like(data[0]), data[0], data[1]]).transpose(1, 2, 0)
         image = Image.fromarray(data, mode="RGB")
@@ -60,6 +70,7 @@ def spectrogram_from_image(
     image: Image.Image,
     power: float = 0.25,
     stereo: bool = False,
+    triple_res_mono: bool = False,
     max_value: float = 30e6,
 ) -> np.ndarray:
     """
@@ -72,6 +83,8 @@ def spectrogram_from_image(
         image: (frequency, time, channels)
         power: The power curve applied to the spectrogram
         stereo: Whether the spectrogram encodes stereo data
+        triple_res_mono: Whether the spectrogram uses R,G,B channels
+            to encode triple resolution of frequency data in mono
         max_value: The max value of the original spectrogram. In practice doesn't matter.
 
     Returns:
@@ -84,13 +97,19 @@ def spectrogram_from_image(
     # Flip Y
     image = image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
 
-    # Munge channels into a numpy array of (channels, frequency, time)
-    data = np.array(image).transpose(2, 0, 1)
-    if stereo:
-        # Take the G and B channels as done in image_from_spectrogram
-        data = data[[1, 2], :, :]
+    data = np.array(image)
+
+    if triple_res_mono:
+        data = data.transpose(0, 2, 1)
+        data = data.reshape(1, data.shape[0] * data.shape[1], data.shape[2])
     else:
-        data = data[0:1, :, :]
+        # Munge channels into a numpy array of (channels, frequency, time)
+        data = data.transpose(2, 0, 1)
+        if stereo:
+            # Take the G and B channels as done in image_from_spectrogram
+            data = data[[1, 2], :, :]
+        else:
+            data = data[0:1, :, :]
 
     # Convert to floats
     data = data.astype(np.float32)

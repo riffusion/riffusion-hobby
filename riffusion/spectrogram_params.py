@@ -20,6 +20,10 @@ class SpectrogramParams:
     # Whether the audio is stereo or mono
     stereo: bool = False
 
+    # Whether the spectrogram uses R,G,B channels
+    # to encode triple resolution of frequency data in mono
+    triple_res_mono: bool = False
+
     # FFT parameters
     sample_rate: int = 44100
     step_size_ms: int = 10
@@ -48,6 +52,7 @@ class SpectrogramParams:
 
         SAMPLE_RATE = 11000
         STEREO = 11005
+        TRIPLE_RES_MONO = 11007
         STEP_SIZE_MS = 11010
         WINDOW_DURATION_MS = 11020
         PADDED_DURATION_MS = 11030
@@ -87,6 +92,7 @@ class SpectrogramParams:
         return {
             self.ExifTags.SAMPLE_RATE.value: self.sample_rate,
             self.ExifTags.STEREO.value: self.stereo,
+            self.ExifTags.TRIPLE_RES_MONO.value: self.triple_res_mono,
             self.ExifTags.STEP_SIZE_MS.value: self.step_size_ms,
             self.ExifTags.WINDOW_DURATION_MS.value: self.window_duration_ms,
             self.ExifTags.PADDED_DURATION_MS.value: self.padded_duration_ms,
@@ -101,15 +107,15 @@ class SpectrogramParams:
         """
         Create a SpectrogramParams object from the EXIF tags of the given image.
         """
-        # TODO(hayk): Handle missing tags
         return cls(
-            sample_rate=exif[cls.ExifTags.SAMPLE_RATE.value],
-            stereo=bool(exif[cls.ExifTags.STEREO.value]),
-            step_size_ms=exif[cls.ExifTags.STEP_SIZE_MS.value],
-            window_duration_ms=exif[cls.ExifTags.WINDOW_DURATION_MS.value],
-            padded_duration_ms=exif[cls.ExifTags.PADDED_DURATION_MS.value],
-            num_frequencies=exif[cls.ExifTags.NUM_FREQUENCIES.value],
-            min_frequency=exif[cls.ExifTags.MIN_FREQUENCY.value],
-            max_frequency=exif[cls.ExifTags.MAX_FREQUENCY.value],
-            power_for_image=exif[cls.ExifTags.POWER_FOR_IMAGE.value],
+            sample_rate=exif.get(cls.ExifTags.SAMPLE_RATE.value) or 0,
+            stereo=bool(exif.get(cls.ExifTags.STEREO.value)),
+            triple_res_mono=bool(exif.get(cls.ExifTags.TRIPLE_RES_MONO.value)),
+            step_size_ms=exif.get(cls.ExifTags.STEP_SIZE_MS.value) or 0,
+            window_duration_ms=exif.get(cls.ExifTags.WINDOW_DURATION_MS.value) or 0,
+            padded_duration_ms=exif.get(cls.ExifTags.PADDED_DURATION_MS.value) or 0,
+            num_frequencies=exif.get(cls.ExifTags.NUM_FREQUENCIES.value) or 0,
+            min_frequency=exif.get(cls.ExifTags.MIN_FREQUENCY.value) or 0,
+            max_frequency=exif.get(cls.ExifTags.MAX_FREQUENCY.value) or 0,
+            power_for_image=exif.get(cls.ExifTags.POWER_FOR_IMAGE.value) or 0,
         )

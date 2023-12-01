@@ -52,6 +52,11 @@ class SpectrogramConverterTest(TestCase):
             num_frequencies=512,
         )
 
+        param_sets["triple_res_mono"] = dataclasses.replace(
+            param_sets["default"],
+            triple_res_mono=True,
+        )
+
         if self.DEBUG:
             param_sets["freq_0_to_10k"] = dataclasses.replace(
                 param_sets["default"],

@@ -23,6 +23,7 @@ class AudioToImageTest(TestCase):
             min_frequency=0,
             max_frequency=10000,
             stereo=False,
+            triple_res_mono=False,
             device=cls.DEVICE,
         )
 
@@ -41,6 +42,14 @@ class AudioToImageTest(TestCase):
         params["stereo"] = True
         self.helper_test_with_params(params)
 
+    def test_triple_res_mono(self) -> None:
+        """
+        Test audio-to-image with triple_res_mono=True.
+        """
+        params = self.default_params()
+        params["triple_res_mono"] = True
+        self.helper_test_with_params(params)
+
     def helper_test_with_params(self, params: T.Dict) -> None:
         audio_path = (
             self.TEST_DATA_PATH
@@ -52,6 +61,8 @@ class AudioToImageTest(TestCase):
 
         if params["stereo"]:
             stem = f"{audio_path.stem}_stereo"
+        if params["triple_res_mono"]:
+            stem = f"{audio_path.stem}_triple_res_mono"
         else:
             stem = audio_path.stem
 
@@ -81,7 +92,7 @@ class AudioToImageTest(TestCase):
         if params["stereo"]:
             # Check that the first channel is zero
             self.assertTrue(np.all(channels[0] == 0))
-        else:
+        elif not params["triple_res_mono"]:
             # Check that all channels are the same
             self.assertTrue(np.all(channels[0] == channels[1]))
             self.assertTrue(np.all(channels[0] == channels[2]))
@@ -92,6 +103,7 @@ class AudioToImageTest(TestCase):
         params_from_exif = SpectrogramParams.from_exif(exif)
         expected_params = SpectrogramParams(
             stereo=params["stereo"],
+            triple_res_mono=params["triple_res_mono"],
             step_size_ms=params["step_size_ms"],
             num_frequencies=params["num_frequencies"],
             max_frequency=params["max_frequency"],

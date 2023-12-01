@@ -32,6 +32,7 @@ def audio_to_image(
     padded_duration_ms: int = 400,
     power_for_image: float = 0.25,
     stereo: bool = False,
+    triple_res_mono: bool = False,
     device: str = "cuda",
 ):
     """
@@ -42,6 +43,7 @@ def audio_to_image(
     params = SpectrogramParams(
         sample_rate=segment.frame_rate,
         stereo=stereo,
+        triple_res_mono=triple_res_mono,
         window_duration_ms=window_duration_ms,
         padded_duration_ms=padded_duration_ms,
         step_size_ms=step_size_ms,
