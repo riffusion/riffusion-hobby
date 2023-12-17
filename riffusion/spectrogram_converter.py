@@ -83,7 +83,7 @@ class SpectrogramConverter:
             mel_scale=params.mel_scale_type,
         ).to(self.device)
 
-        # https://pytorch.org/audio/stable/generated/torchaudio.transforms.InverseMelScale.html
+        # https://pytorch.org/audio/2.0.1/generated/torchaudio.transforms.InverseMelScale.html
         self.inverse_mel_scaler = torchaudio.transforms.InverseMelScale(
             n_stft=params.n_fft // 2 + 1,
             n_mels=params.num_frequencies,

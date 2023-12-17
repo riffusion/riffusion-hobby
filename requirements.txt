@@ -14,7 +14,7 @@ scipy
 soundfile
 sox
 streamlit>=1.18.0
-torch
-torchaudio
-torchvision
+torch==2.0.1
+torchaudio==2.0.2
+torchvision==0.15.2
 transformers
