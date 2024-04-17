@@ -82,6 +82,7 @@ Test availability with:
 
 ```python3
 import torch
+torch.__version__
 torch.cuda.is_available()
 ```
 
