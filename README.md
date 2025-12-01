@@ -220,3 +220,13 @@ The results of `mypy .`, `black .`, and `ruff .` *must* be clean to accept a PR.
 CI is run through GitHub Actions from `.github/workflows/ci.yml`.
 
 Contributions are welcome through pull requests.
+বেসটা বাড়া—ধুম ধুম বাজে,
+Dance floor জ্বলে—লাইট সব সাজে।
+তুই পাশে এলে vibe হয় crazy,
+Tonight আমরা দু’জন full-on lazy!
+
+(Beat Part)
+DJ তোলে beat—boom boom boom,
+তোর সাথে নাচলে হারাই আমি room।
+হাওয়ায় উড়ে যায় সব tension ভাই,
+আজকের রাতটা শুধু আমাদেরই তাই।
